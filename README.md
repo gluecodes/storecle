@@ -2,7 +2,7 @@
 
 A neat uni-directional app state management for [React](https://reactjs.org/) and [Solid](https://www.solidjs.com/).
 
-The core part of the library is mature and has been used to develop a complex project as an online IDE -  [GlueCodes Studio](https://www.glue.codes).
+The core part of the library is mature and has been used to develop as complex project as an online IDE -  [GlueCodes Studio](https://www.glue.codes).
 However, it requires a good documentation and examples which should start appearing in up-coming weeks. For now, I've created these two examples:
 
 - [React Example](https://codesandbox.io/s/ecstatic-night-pzrbl?file=/src/App.js)
