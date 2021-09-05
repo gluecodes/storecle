@@ -1,4 +1,4 @@
-name: Deploy Storcle
+name: Deploy Storecle
 on:
   release:
     types: [created]
