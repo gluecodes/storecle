@@ -1,0 +1,12 @@
+version: "3.5"
+
+services:
+  storecle:
+    build: .
+    container_name: storecle
+    command: "tail -f /dev/null"
+    volumes:
+      - .:/src/storecle:rw
+      - /src/storecle/node_modules
+    env_file:
+      - .env

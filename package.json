@@ -1,0 +1,35 @@
+{
+  "name": "storecle",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./src/index.js",
+  "scripts": {
+    "lint": "eslint . --ext .js --ext .jsx"
+  },
+  "sideEffects": false,
+  "author": "Chris Czopp",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.13.7 "
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.13.0 ",
+    "@babel/core": "^7.13.1",
+    "@babel/plugin-proposal-export-namespace-from": "^7.12.13",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/plugin-transform-runtime": "^7.12.17",
+    "@babel/preset-env": "^7.13.5",
+    "babel-loader": "^8.2.2",
+    "babel-preset-solid": "^0.24.2",
+    "eslint": "^6.6.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-loader": "^3.0.2",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
+  }
+}
