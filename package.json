@@ -1,8 +1,12 @@
 {
-  "name": "storecle",
+  "name": "@gluecodes/storecle",
   "version": "0.0.1",
-  "description": "",
+  "description": "A neat uni-directional app state management for React and Solid.",
   "main": "./src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gluecodes/storecle.git"
+  },
   "scripts": {
     "lint": "eslint . --ext .js --ext .jsx"
   },
