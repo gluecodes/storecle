@@ -1,7 +1,7 @@
 name: Deploy Storecle
 on:
-  release:
-    types: [created]
+  push:
+    branches: [master]
 jobs:
   build:
     runs-on: ubuntu-latest
