@@ -8,5 +8,7 @@ services:
     volumes:
       - .:/src/storecle:rw
       - /src/storecle/node_modules
+      - /src/storecle/test/env/react/node_modules
+      - /src/storecle/test/env/solid/node_modules
     env_file:
       - .env

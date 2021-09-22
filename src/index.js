@@ -1,143 +1,165 @@
 export const adaptForReact = (updateStore, store) => ({
   updateStore: (keyName, result) => {
-    if (keyName === "actionResults") {
-      Object.assign(store.actionResults, result(store.actionResults));
+    if (keyName === 'actionResults') {
+      Object.assign(store.actionResults, result(store.actionResults))
       updateStore({
         ...store
-      });
+      })
     } else {
-      store.actionResults[keyName] = result;
-      updateStore({ ...store });
+      store.actionResults[keyName] = result
+      updateStore({ ...store })
     }
   }
-});
+})
 
 export const adaptForSolid = (updateStore) => ({
   updateStore: (keyName, result, ...rest) => {
-    if (keyName === "actionResults") {
-      updateStore(keyName, result, ...rest);
-    } else if (result?.constructor.name === "Object") {
-      updateStore("actionResults", (actionResults) => ({
+    if (keyName === 'actionResults') {
+      updateStore(keyName, result, ...rest)
+    } else if (result?.constructor.name === 'Object') {
+      updateStore('actionResults', (actionResults) => ({
         ...actionResults,
         [keyName]: result
-      }));
+      }))
     } else {
-      updateStore("actionResults", keyName, result);
+      updateStore('actionResults', keyName, result)
     }
   }
-});
+})
+
+export const builtInActions = {
+  onStoreChanged: null,
+  runUserActions: null,
+  runDataSuppliers: null
+}
 
 export default ({
+  dataSupplierPipeline,
+  dataSuppliers,
   handleError,
   initialStore = {},
-  uiDataSupplierPipeline,
-  uiDataSuppliers,
+  reloadTypes,
   updateStore,
   userActions
 }) => {
-  const store = initialStore;
-  const storeChangedEvent = new EventTarget();
-  const builtInActions = {
-    onStoreChanged: (handler) => {
-      storeChangedEvent.addEventListener("storeChanged", handler);
-    },
-    runUserActions: async (actions) => {
-      try {
-        const userActionResults = {};
+  const storeChangedEventTarget = new EventTarget()
+  const storeChangedEventListeners = []
+  const store = initialStore
+  let shouldAbortDataSuppliers = false
 
-        for (const itemToRun of actions) {
-          const [actionName, ...args] = itemToRun;
-          const actionBeingExecuted = userActions[actionName](...args);
-
-          if (actionBeingExecuted instanceof Promise) {
-            userActionResults[actionName] = await actionBeingExecuted;
-          } else {
-            userActionResults[actionName] = actionBeingExecuted;
-          }
-        }
-
-        updateStore("actionResults", (actionResults) => ({
-          ...actionResults,
-          ...userActionResults
-        }));
-
-        storeChangedEvent.dispatchEvent(
-          new CustomEvent("storeChanged", {
-            detail: {
-              affectedKeys: actions.map(([actionName]) => actionName)
-            }
-          })
-        );
-      } catch (err) {
-        handleError(err);
-      }
-    }
-  };
   const userActionsProxy = new Proxy(
     {},
     {
       get: (_, actionName) => (...args) => {
         try {
           if (builtInActions[actionName]) {
-            return builtInActions[actionName](...args);
+            return builtInActions[actionName](...args)
           }
 
-          const actionBeingExecuted = userActions[actionName](...args);
+          const actionBeingExecuted = userActions[actionName](...args)
+
+          setInStore('userActionBeingExecuted', actionName)
 
           if (actionBeingExecuted instanceof Promise) {
-            setInStore("userActionBeingExecuted", actionName);
             return actionBeingExecuted
               .then((result) => {
-                setInStore(actionName, result);
-                return result;
+                setInStore(actionName, result)
+                return result
               })
-              .catch(handleError);
+              .catch(handleError)
           }
 
-          setInStore(actionName, actionBeingExecuted);
-          return actionBeingExecuted;
+          setInStore(actionName, actionBeingExecuted)
+          return actionBeingExecuted
         } catch (err) {
-          handleError(err);
+          handleError(err)
         }
       }
     }
-  );
+  )
   const setInStore = (actionName, result) => {
-    updateStore(actionName, result);
-    storeChangedEvent.dispatchEvent(
-      new CustomEvent("storeChanged", {
+    updateStore(actionName, result)
+    storeChangedEventTarget.dispatchEvent(
+      new CustomEvent('storeChanged', {
         detail: {
           affectedKeys: [actionName]
         }
       })
-    );
-  };
-  const liveUiDataSuppliers = {
+    )
+  }
+  const liveDataSuppliers = {
     initialized: [],
     promises: {},
     resolvers: {}
-  };
+  }
   const incomingDataProvided = (actionName, result) => {
-    liveUiDataSuppliers.resolvers[actionName](result);
-    setInStore(actionName, result);
-  };
+    liveDataSuppliers.resolvers[actionName](result)
+    setInStore(actionName, result)
+  }
 
-  setInStore("getBuiltInActions", builtInActions);
+  const getNameOfAction = (action) =>
+    Object.keys(dataSuppliers).find(
+      (actionName) => dataSuppliers[actionName] === action
+    ) ||
+    Object.keys(userActions).find(
+      (actionName) => userActions[actionName] === action
+    ) ||
+    Object.keys(builtInActions).find(
+      (actionName) => builtInActions[actionName] === action
+    ) ||
+    Object.keys(reloadTypes).find(
+      (actionName) => reloadTypes[actionName] === action
+    )
 
-  return {
-    context: [store.actionResults, userActionsProxy],
-    runUiDataSuppliers: async (reloadType = "full") => {
-      setInStore("reloadUiDataSuppliers", reloadType);
+  const getActionResult = (action) => {
+    const actionName =
+      Object.keys(dataSuppliers).find(
+        (actionName) => dataSuppliers[actionName] === action
+      ) ||
+      Object.keys(userActions).find(
+        (actionName) => userActions[actionName] === action
+      ) ||
+      Object.keys(builtInActions).find(
+        (actionName) => builtInActions[actionName] === action
+      )
 
-      for (const actionName of uiDataSupplierPipeline) {
-        const actionBeingExecuted = uiDataSuppliers[actionName](
-          store.actionResults
-        );
+    return store.actionResults[actionName]
+  }
+
+  const dispatchAction = (action) => {
+    const actionName =
+      Object.keys(userActions).find(
+        (actionName) => userActions[actionName] === action
+      ) ||
+      Object.keys(builtInActions).find(
+        (actionName) => builtInActions[actionName] === action
+      )
+
+    return userActionsProxy[actionName]
+  }
+
+  const runDataSuppliers = async (reloadType = 'full') => {
+    setInStore('runDataSuppliers', reloadType)
+
+    try {
+      for (const action of dataSupplierPipeline) {
+        if (shouldAbortDataSuppliers) {
+          return
+        }
+
+        const actionName = Object.keys(dataSuppliers).find(
+          (actionName) => dataSuppliers[actionName] === action
+        )
+
+        const actionBeingExecuted = dataSuppliers[actionName](
+          getActionResult,
+          getNameOfAction
+        )
 
         if (actionBeingExecuted instanceof Promise) {
-          setInStore(actionName, await actionBeingExecuted);
-        } else if (typeof actionBeingExecuted === "function") {
-          liveUiDataSuppliers.promises[actionName] = new Promise(
+          setInStore(actionName, await actionBeingExecuted)
+        } else if (typeof actionBeingExecuted === 'function') {
+          liveDataSuppliers.promises[actionName] = new Promise(
             (resolve, reject) => {
               setTimeout(
                 () =>
@@ -147,30 +169,89 @@ export default ({
                     )
                   ),
                 20000
-              );
-              liveUiDataSuppliers.resolvers[actionName] = resolve;
+              )
+              liveDataSuppliers.resolvers[actionName] = resolve
             }
-          );
+          )
           actionBeingExecuted({
-            asyncResults: liveUiDataSuppliers.promises,
-            hasBeenInitialized: liveUiDataSuppliers.initialized.includes(
+            asyncResults: liveDataSuppliers.promises,
+            hasBeenInitialized: liveDataSuppliers.initialized.includes(
               actionName
             ),
             provide: (data) => incomingDataProvided(actionName, data)
-          });
-          liveUiDataSuppliers.initialized.push(actionName);
+          })
+          liveDataSuppliers.initialized.push(actionName)
         } else {
-          setInStore(actionName, actionBeingExecuted);
+          setInStore(actionName, actionBeingExecuted)
         }
       }
 
-      storeChangedEvent.dispatchEvent(
-        new CustomEvent("storeChanged", {
+      storeChangedEventTarget.dispatchEvent(
+        new CustomEvent('storeChanged', {
           detail: {
-            affectedKeys: uiDataSupplierPipeline
+            affectedKeys: Object.keys(dataSuppliers).filter((actionName) =>
+              dataSupplierPipeline.find(
+                (action) => action === dataSuppliers[actionName]
+              )
+            )
           }
         })
-      );
+      )
+    } catch (err) {
+      handleError(err)
     }
-  };
-};
+  }
+
+  Object.assign(builtInActions, {
+    onStoreChanged: (handler) => {
+      storeChangedEventTarget.addEventListener(
+        'storeChanged',
+        storeChangedEventListeners[storeChangedEventListeners.push(handler) - 1]
+      )
+    },
+    runUserActions: async (actions) => {
+      try {
+        const userActionResults = {}
+
+        for (const itemToRun of actions) {
+          const [actionName, ...args] = itemToRun
+          const actionBeingExecuted = userActions[actionName](...args)
+
+          if (actionBeingExecuted instanceof Promise) {
+            userActionResults[actionName] = await actionBeingExecuted
+          } else {
+            userActionResults[actionName] = actionBeingExecuted
+          }
+        }
+
+        updateStore('actionResults', (actionResults) => ({
+          ...actionResults,
+          ...userActionResults
+        }))
+
+        storeChangedEventTarget.dispatchEvent(
+          new CustomEvent('storeChanged', {
+            detail: {
+              affectedKeys: actions.map(([actionName]) => actionName)
+            }
+          })
+        )
+      } catch (err) {
+        handleError(err)
+      }
+    },
+    runDataSuppliers
+  })
+
+  return {
+    context: [getActionResult, dispatchAction, getNameOfAction],
+    runDataSuppliers,
+    nameOf: getNameOfAction,
+    cleanup: () => {
+      shouldAbortDataSuppliers = true
+      storeChangedEventListeners.forEach((listener) => {
+        storeChangedEventTarget.removeEventListener('storeChanged', listener)
+      })
+    }
+  }
+}
