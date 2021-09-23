@@ -1,1 +1,1 @@
-export default from '../../../src/solid/PageProvider.jsx'
+export { default } from '../../../src/solid/PageProvider'

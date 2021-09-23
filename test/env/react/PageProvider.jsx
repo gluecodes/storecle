@@ -1,1 +1,1 @@
-export default from '../../../src/react/PageProvider.jsx'
+export { default } from '../../../src/react/PageProvider'

@@ -73,3 +73,7 @@ nbproject
 .node_history
 
 dist/
+test/env/react/.parcel-cache
+test/env/react/dist
+test/env/solid/.parcel-cache
+test/env/solid/dist

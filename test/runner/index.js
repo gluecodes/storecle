@@ -78,9 +78,9 @@ module.exports = async ({
     ))
   )
 
-  const requestAppData = async (payload) => {
+  const fetchAppChangeHistory = async (payload) => {
     page.evaluate((serializedPayload) => {
-      document.dispatchEvent(new CustomEvent('requestAppData', {
+      document.dispatchEvent(new CustomEvent('fetchAppChangeHistory', {
         bubbles: true,
         cancelable: false,
         detail: serializedPayload
@@ -104,7 +104,7 @@ module.exports = async ({
 
   await page.setViewport({ width: 1920, height: 1080 })
   await page.goto(url)
-  await page.waitForSelector('#layout > div')
+  await page.waitForSelector(waitForSelector)
 
   const cssClasses = await fetchCssClasses(page)
 
@@ -118,7 +118,7 @@ module.exports = async ({
       Object.assign(cssClasses, await fetchCssClasses(page))
     },
     page,
-    requestAppData: async (payload) => new Promise((resolve, reject) => {
+    fetchAppChangeHistory: async (payload) => new Promise((resolve, reject) => {
       if (lastAppDataHandler) {
         page.off('console', lastAppDataHandler)
       }
@@ -131,7 +131,7 @@ module.exports = async ({
         }
       })
 
-      requestAppData(payload)
+      fetchAppChangeHistory(payload)
         .catch(reject)
     }),
     updateCssClasses: async () => {

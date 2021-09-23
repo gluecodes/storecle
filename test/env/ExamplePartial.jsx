@@ -1,5 +1,5 @@
 import { builtInActions } from '../../src/index'
-import { useAppContext } from './solid/appContext'
+import { useAppContext } from 'appContext'
 
 import {
   feedWithIncomingData,

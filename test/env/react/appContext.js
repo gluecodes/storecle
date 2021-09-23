@@ -1,1 +1,1 @@
-export default from '../../../src/react/appContext'
+export { default } from '../../../src/react/appContext'

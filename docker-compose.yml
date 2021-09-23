@@ -10,5 +10,7 @@ services:
       - /src/storecle/node_modules
       - /src/storecle/test/env/react/node_modules
       - /src/storecle/test/env/solid/node_modules
+    ports:
+      - 1234:1234
     env_file:
       - .env

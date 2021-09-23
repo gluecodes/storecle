@@ -14,5 +14,4 @@ RUN apt-get update \
 WORKDIR /src/storecle
 ADD . /src/storecle
 RUN yarn install
-RUN cd /src/storecle/test/env/react && yarn install
-RUN cd /src/storecle/test/env/solid && yarn install
+
