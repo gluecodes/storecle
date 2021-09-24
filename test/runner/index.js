@@ -88,14 +88,13 @@ module.exports = async ({
     }, payload)
   }
 
-  page.on('console', (msg) => {
+  /* page.on('console', (msg) => {
     const logBatch = msg.text()
 
-    if (!/^#/.test(logBatch) &&
-      !/^(\[WDS\]|\[HMR\])/.test(logBatch)) {
-      // console.log(logBatch)
+    if (!/^\$/.test(logBatch)) {
+      console.log(logBatch)
     }
-  })
+  }) */
 
   page.on('error', (err) => {
     console.error(err)
@@ -126,7 +125,7 @@ module.exports = async ({
       page.on('console', lastAppDataHandler = (msg) => {
         const logBatch = msg.text()
 
-        if (/^$/.test(logBatch)) {
+        if (/^\$/.test(logBatch)) {
           resolve(JSON.parse(logBatch.slice(1)))
         }
       })

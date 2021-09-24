@@ -1,7 +1,7 @@
 import { createEffect, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
-import initPage, { adaptForSolid } from '../index'
+import initPage, { adaptForSolid } from '../common/index'
 import { AppProvider } from './appContext'
 
 export default ({
@@ -41,7 +41,6 @@ export default ({
     )
 
     if (reloadType) {
-      console.log('reload', reloadType)
       runDataSuppliers(reloadType)
     }
   })

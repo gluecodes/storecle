@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState } from 'react'
 
-import initPage, { adaptForReact } from '../index'
+import initPage, { adaptForReact } from '../common/index'
 import { AppProvider } from './appContext'
 
 export default ({

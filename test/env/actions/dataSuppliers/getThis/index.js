@@ -1,4 +1,4 @@
-import { builtInActions } from '../../../../../src/index'
+import { builtInActions } from '../../../../../src/common/index'
 import { triggeredByDoThat } from '../../reloadTypes'
 
 export default async function getThis (resultOf, nameOf) {

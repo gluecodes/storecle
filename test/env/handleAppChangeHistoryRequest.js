@@ -1,4 +1,4 @@
-document.addEventListener('fetchAppChangeHistory', (e) => {
+global.document.addEventListener('fetchAppChangeHistory', (e) => {
   console.log('$' + JSON.stringify({
     test: 'data'
   }))

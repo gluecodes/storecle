@@ -10,7 +10,8 @@
   "scripts": {
     "postinstall": "(cd test/env/react && yarn install); (cd test/env/solid && yarn install);",
     "start": "(cd test/env/react && yarn start) & (cd test/env/solid && yarn start);",
-    "lint": "eslint . --ext .js --ext .jsx"
+    "lint": "eslint . --ext .js --ext .jsx",
+    "test": "mocha './test/features/**/*.js' --timeout 60000"
   },
   "sideEffects": false,
   "author": "Chris Czopp",

@@ -1,4 +1,4 @@
-import { builtInActions } from '../../../../../src/index'
+import { builtInActions } from '../../../../../src/common/index'
 
 const COUNTER_INITIAL_VALUE = 10
 

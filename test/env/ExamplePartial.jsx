@@ -1,4 +1,4 @@
-import { builtInActions } from '../../src/index'
+import { builtInActions } from '../../src/common/index'
 import { useAppContext } from 'appContext'
 
 import {

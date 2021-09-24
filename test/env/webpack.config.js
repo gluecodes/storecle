@@ -19,7 +19,10 @@ const pageHtml = `
 module.exports = {
   target: 'web',
   entry: {
-    index: path.resolve(__dirname, `./${cwd}/index.js`)
+    index: [
+      path.resolve(__dirname, './handleAppChangeHistoryRequest.js'),
+      path.resolve(__dirname, `./${cwd}/index.js`)
+    ]
   },
   module: {
     rules: [
