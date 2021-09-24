@@ -1,7 +1,7 @@
 import ExamplePartial from './ExamplePartial.jsx'
 
 export default () => (
-  <div className='App'>
+  <div className='container'>
     <ExamplePartial />
   </div>
 )

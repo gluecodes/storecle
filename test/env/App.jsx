@@ -1,5 +1,5 @@
-import * as dataSuppliers from './actions/dataSuppliers'
-import * as userActions from './actions/userActions'
+import * as dataSuppliers from './actions/dataSuppliers/index'
+import * as userActions from './actions/userActions/index'
 import * as reloadTypes from './actions/reloadTypes'
 
 import PageProvider from 'PageProvider'

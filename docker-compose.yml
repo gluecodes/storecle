@@ -4,7 +4,7 @@ services:
   storecle:
     build: .
     container_name: storecle
-    command: "tail -f /dev/null"
+    command: "yarn start"
     volumes:
       - .:/src/storecle:rw
       - /src/storecle/node_modules
@@ -12,5 +12,6 @@ services:
       - /src/storecle/test/env/solid/node_modules
     ports:
       - 1234:1234
+      - 4321:4321
     env_file:
       - .env
