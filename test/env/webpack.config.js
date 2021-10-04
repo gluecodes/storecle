@@ -3,10 +3,10 @@ const path = require('path')
 
 const cwd = path.basename(process.cwd())
 
-const pageHtml = `
+const getPageHtml = (frameworkName = cwd) => `
 <html>
 <head>
-  <title>${cwd} sandbox</title>
+  <title>${frameworkName} sandbox</title>
   <meta charset="UTF-8" />
 </head>
 <body>
@@ -61,7 +61,7 @@ module.exports = {
     hot: true,
     onBeforeSetupMiddleware: ({ app }) => {
       app.get('/', (req, res) => {
-        res.send(pageHtml)
+        res.send(getPageHtml())
       })
     }
   },

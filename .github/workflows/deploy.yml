@@ -25,15 +25,10 @@ jobs:
           sudo rm -rf /var/lib/apt/lists/*
           sudo wget --quiet https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/sbin/wait-for-it.sh
           sudo chmod +x /usr/sbin/wait-for-it.sh
-      - run: sudo npm install http-server -g
-      - run: yarn build
+      - run: yarn start & sleep 5 && yarn test
         working-directory: ./test/env/react
-      - run: yarn build
+      - run: yarn start & sleep 5 && yarn test
         working-directory: ./test/env/solid
-      - run: http-server . -p 1234 & sleep 5 && yarn test
-        working-directory: ./test/env/react/dist
-      - run: http-server . -p 4321 & sleep 5 && yarn test
-        working-directory: ./test/env/solid/dist
       - run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
