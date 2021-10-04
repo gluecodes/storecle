@@ -30,7 +30,7 @@ jobs:
         working-directory: ./test/env/react
       - run: yarn build
         working-directory: ./test/env/solid
-      - run: http-server . -p 1234 & sleep 5 && yarn test:react
+      - run: http-server . -p 1234 & sleep 5 && yarn test
         working-directory: ./test/env/react/dist
-      - run: http-server . -p 4321 & sleep 5 && yarn test:solid
+      - run: http-server . -p 4321 & sleep 5 && yarn test
         working-directory: ./test/env/solid/dist
