@@ -1,28 +1,23 @@
 export const adaptForReact = (updateStore, store) => ({
   updateStore: (keyName, result) => {
-    if (keyName === 'actionResults') {
-      Object.assign(store.actionResults, result(store.actionResults))
+    if (typeof keyName === 'function') {
+      Object.assign(store, keyName(store))
       updateStore({
         ...store
       })
     } else {
-      store.actionResults[keyName] = result
+      store[keyName] = result
       updateStore({ ...store })
     }
   }
 })
 
 export const adaptForSolid = (updateStore) => ({
-  updateStore: (keyName, result, ...rest) => {
-    if (keyName === 'actionResults') {
-      updateStore(keyName, result, ...rest)
-    } else if (result?.constructor.name === 'Object') {
-      updateStore('actionResults', (actionResults) => ({
-        ...actionResults,
-        [keyName]: result
-      }))
+  updateStore: (keyName, result) => {
+    if (typeof keyName === 'function') {
+      updateStore(keyName)
     } else {
-      updateStore('actionResults', keyName, result)
+      updateStore(keyName, result)
     }
   }
 })
@@ -123,7 +118,7 @@ export default ({
         (actionName) => builtInActions[actionName] === action
       )
 
-    return store.actionResults[actionName]
+    return store[actionName]
   }
 
   const dispatchAction = (action) => {
@@ -178,7 +173,7 @@ export default ({
             hasBeenInitialized: liveDataSuppliers.initialized.includes(
               actionName
             ),
-            provide: (data) => incomingDataProvided(actionName, data)
+            supply: (data) => incomingDataProvided(actionName, data)
           })
           liveDataSuppliers.initialized.push(actionName)
         } else {
@@ -224,7 +219,7 @@ export default ({
           }
         }
 
-        updateStore('actionResults', (actionResults) => ({
+        updateStore((actionResults) => ({
           ...actionResults,
           ...userActionResults
         }))

@@ -1,6 +1,6 @@
 {
   "name": "@gluecodes/storecle",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A neat uni-directional app state management for React and Solid.",
   "main": "./src/index.js",
   "repository": {
@@ -11,7 +11,9 @@
     "postinstall": "(cd test/env/react && yarn install); (cd test/env/solid && yarn install);",
     "start": "(cd test/env/react && yarn start) & (cd test/env/solid && yarn start);",
     "lint": "eslint . --ext .js --ext .jsx",
-    "test": "mocha './test/features/**/*.js' --timeout 60000"
+    "test:react": "export FRAMEWORK=react && mocha './test/features/**/*.js' --timeout 60000",
+    "test:solid": "export FRAMEWORK=solid && mocha './test/features/**/*.js' --timeout 60000",
+    "test": "yarn test:react && yarn test:solid"
   },
   "sideEffects": false,
   "author": "Chris Czopp",

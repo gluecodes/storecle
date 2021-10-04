@@ -27,8 +27,13 @@ jobs:
           sudo chmod +x /usr/sbin/wait-for-it.sh
       - run: sudo npm install http-server -g
       - run: yarn build
-      - run: http-server . -p 8000 & sleep 5 && yarn test
-        working-directory: ./dist
+        working-directory: ./test/env/react
+      - run: yarn build
+        working-directory: ./test/env/solid
+      - run: http-server . -p 1234 & sleep 5 && yarn test:react
+        working-directory: ./test/env/react/dist
+      - run: http-server . -p 4321 & sleep 5 && yarn test:solid
+        working-directory: ./test/env/solid/dist
       - run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

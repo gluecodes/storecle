@@ -14,9 +14,7 @@ export default ({
   onError
 }) => {
   const [store, updateStore] = createStore({
-    actionResults: {
-      ...initialState
-    }
+    ...initialState
   })
 
   const { cleanup, context, nameOf, runDataSuppliers } = initPage({
@@ -35,8 +33,8 @@ export default ({
     const reloadType = Object.keys(reloadTypes).find((type) =>
       reloadTypes[type](nameOf).some(
         (actionName) =>
-          store.actionResults.userActionBeingExecuted === actionName &&
-          store.actionResults[actionName]
+          store.userActionBeingExecuted === actionName &&
+          store[actionName]
       )
     )
 

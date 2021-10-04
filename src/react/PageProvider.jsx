@@ -14,9 +14,7 @@ export default ({
   onError
 }) => {
   const [store, updateStore] = useState({
-    actionResults: {
-      ...initialState
-    }
+    ...initialState
   })
 
   const { cleanup, context, nameOf, runDataSuppliers } = useMemo(
@@ -38,8 +36,8 @@ export default ({
       const reloadType = Object.keys(reloadTypes).find((type) =>
         reloadTypes[type](nameOf).some(
           (actionName) =>
-            store.actionResults.userActionBeingExecuted === actionName &&
-            store.actionResults[actionName]
+            store.userActionBeingExecuted === actionName &&
+            store[actionName]
         )
       )
 
@@ -52,7 +50,7 @@ export default ({
           []
         )
       )
-    ).map((actionName) => store.actionResults[actionName])
+    ).map((actionName) => store[actionName])
   )
 
   useEffect(() => () => cleanup(), [global.location.pathname, cleanup])

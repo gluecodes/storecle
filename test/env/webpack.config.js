@@ -20,7 +20,8 @@ module.exports = {
   target: 'web',
   entry: {
     index: [
-      path.resolve(__dirname, './handleAppChangeHistoryRequest.js'),
+      path.resolve(__dirname, './testHelpers/handleAppChangeHistoryRequest.js'),
+      path.resolve(__dirname, './testHelpers/registerMutationObserver.js'),
       path.resolve(__dirname, `./${cwd}/index.js`)
     ]
   },
