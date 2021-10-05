@@ -1,6 +1,8 @@
 # Storecle
 
-A neat uni-directional app state management for [React](https://reactjs.org/) and [Solid](https://www.solidjs.com/).
+**@gluecodes/storecle**
+
+A neat uni-directional app state management for [React](https://reactjs.org/) and [Solid](https://www.solidjs.com/) (:heart:).
 
 ## Features
 
@@ -18,6 +20,16 @@ To improve the code re-usability, Data Suppliers use a middleware pattern. They 
 - It provides an elegant approach to actions feeding UI with incoming data (e.g. from Web Sockets).
 - It is made to work with your IDE's code auto-completion.
 
+## Motivation
+
+I :heart: Redux, but it leaves plenty of room to be misused. Hence, Storecle is my proposal to let developers rely less on self-discipline and more on tooling and self-restrictive design.
+
+1. To provide an easy way of separating app-wide logic from views i.e.:
+    - No inline: data fetches, transformers, conditionals.
+    - No nested action dispatchers upon other action completion.
+2. To facilitate the action re-usability and modularization.
+3. To provide a gradual path for [React](https://reactjs.org/) developers willing to use [Solid](https://www.solidjs.com/).
+
 ## Installation
 
 ```bash
@@ -32,11 +44,28 @@ npm i @gluecodes/storecle
 
 ## Usage
 
-Soon starter templates will be released. The bellow snippets are meant to help you visualize the concepts and inner parts of the app state management.
+Soon official starter templates will be released. Using this library means following certain patterns which are explained below using a simple counter example. 
 
-### 1) Page Container
+File tree:
 
-Page provider wraps a given Layout into the app context.
+```
+.
+├── actions
+│   ├── dataSuppliers (#2)
+│   │   └── index.js
+│   ├── reloadTypes.js (#4)
+│   └── userActions (#3)
+│       └── index.js
+├── index.jsx (#1)
+├── Layout.jsx (#5)
+└── partials (#6)
+    └── Counter
+        └── index.jsx
+```
+
+### 1. Page Container
+
+Page provider wraps a given Layout around a single app context.
 
 - `dataSupplierPipeline` - an array providing the order in which Data Suppliers are executed.
 - `dataSuppliers` - an object containing Data Suppliers.
@@ -45,7 +74,7 @@ Page provider wraps a given Layout into the app context.
 - `userActions` - an object containing User Actions.
 - `onError` - a function triggered when an error is thrown either in Data Suppliers or User Actions.
 
-`index.jsx`
+`./index.jsx`
 
 ```javascript
 import { PageProvider } from '@gluecodes/storecle'
@@ -77,7 +106,7 @@ export default function App () {
 }
 ```
 
-### 2) Data Suppliers
+### 2. Data Suppliers
 
 Data suppliers return data prior to rendering. Note the early returns which demonstrate how to resolve cached data based on Reload Type.
 
@@ -90,7 +119,7 @@ Data suppliers return data prior to rendering. Note the early returns which demo
     - `nameOf` - a function providing a name of either Data Supplier, User Action or Reload Type.
 - Data Suppliers can be either sync or async and write to a central Store by returning/resolving.
 
-`actions/dataSuppliers/index.js`
+`./actions/dataSuppliers/index.js`
 
 ```javascript
 
@@ -120,11 +149,11 @@ export function getTexts (resultOf) {
 }
 ```
 
-### 3) User Actions
+### 3. User Actions
 
 Actions triggered by a user.
 
-`actions/userActions/index.js`
+`./actions/userActions/index.js`
 
 ```javascript
 export function incrementCounter (counter) {
@@ -132,7 +161,7 @@ export function incrementCounter (counter) {
 }
 ```
 
-### 4) Reload Types
+### 4. Reload Types
 
 A way to tell the app to re-run Data Suppliers based on executed User Actions.
 
@@ -143,7 +172,7 @@ A way to tell the app to re-run Data Suppliers based on executed User Actions.
 - Each Reload Type is a function which passes `nameOf` and returns an array of User Action names.
     - `nameOf` - a function providing a name of User Action.
 
-`actions/reloadTypes.js`
+`./actions/reloadTypes.js`
 
 ```javascript
 import { incrementCounter } from './userActions/index'
@@ -154,11 +183,11 @@ export const reFetchCounter = (nameOf) => [
 
 ```
 
-### 5) Layout
+### 5. Layout
 
 Nothing else than the page layout.
 
-`Layout.jsx`
+`./Layout.jsx`
 
 ```jsx
 import Counter from './partials/Counter/index.jsx'
@@ -171,7 +200,7 @@ export default () => (
 
 ```
 
-### 6) Partials
+### 6. Partials
 
 Partials are self-contained pieces of UI which have access to app state via the app context.
 
@@ -180,7 +209,7 @@ Partials are self-contained pieces of UI which have access to app state via the 
     - `action` - a function which triggers User Action.
     - `nameOf` - a function providing a name of either Data Supplier or User Action.
 
-`partials/Counter/index.jsx`
+`./partials/Counter/index.jsx`
 
 ```jsx
 import { useAppContext } from '@gluecodes/storecle'
@@ -204,6 +233,10 @@ export default () => {
   )
 }
 ```
+
+## Documentation
+
+WIP, so far there is only this `README.md` and a project `./test/env`. More docs will come with starter templates and CLI tooling. 
 
 ## License
 
