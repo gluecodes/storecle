@@ -1,4 +1,5 @@
-import { builtInActions } from '../../../../../src/common/index'
+import { builtInActions } from '@gluecodes/storecle'
+
 import { triggeredByDoThat } from '../../reloadTypes'
 import appChangeHistorySnapshotTypes from '../../../testHelpers/appChangeHistorySnapshotTypes.json'
 

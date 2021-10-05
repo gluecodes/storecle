@@ -1,4 +1,5 @@
-import { builtInActions } from '../../../../../src/common/index'
+import { builtInActions } from '@gluecodes/storecle'
+
 import appChangeHistorySnapshotTypes from '../../../testHelpers/appChangeHistorySnapshotTypes.json'
 
 const COUNTER_INITIAL_VALUE = 10

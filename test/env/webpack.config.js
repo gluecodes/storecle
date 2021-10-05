@@ -71,8 +71,7 @@ module.exports = {
   },
   resolve: {
     alias: {
-      appContext: path.resolve(__dirname, `../../src/${cwd}/appContext.js`),
-      PageProvider: path.resolve(__dirname, `../../src/${cwd}/PageProvider.jsx`),
+      '@gluecodes/storecle': path.resolve(__dirname, `../../src/${cwd}.js`),
       react: path.resolve(__dirname, `${cwd}/node_modules/react`),
       'solid-js': path.resolve(__dirname, `${cwd}/node_modules/solid-js`)
     }

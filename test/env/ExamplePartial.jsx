@@ -1,5 +1,4 @@
-import { builtInActions } from '../../src/common/index'
-import { useAppContext } from 'appContext'
+import { builtInActions, useAppContext } from '@gluecodes/storecle'
 
 import {
   feedWithIncomingData,
