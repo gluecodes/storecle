@@ -42,6 +42,8 @@ or
 npm i @gluecodes/storecle
 ```
 
+It works along with either [React](https://reactjs.org/) or [Solid](https://www.solidjs.com/) that also needs to be installed in your app. For details, see their own documentations.
+
 ## Usage
 
 Soon official starter templates will be released. Using this library means following certain patterns which are explained below using a simple counter example. 
