@@ -46,6 +46,28 @@ It works along with either [React](https://reactjs.org/) or [Solid](https://www.
 
 ## Usage
 
+This module exports 3 constructs that can be imported for a particular framework in different parts of your app.
+
+```javascript
+import { 
+  builtInActions, 
+  PageProvider, 
+  useAppContext 
+} from '@gluecodes/storecle/react'
+```
+
+or
+
+```javascript
+import { 
+  builtInActions, 
+  PageProvider, 
+  useAppContext 
+} from '@gluecodes/storecle/solid'
+```
+
+For the purpose of the example I used a Solid version.
+
 Soon the official starter templates will be released. Using this library means following certain patterns which are explained below using a simple counter example. 
 
 File tree:
@@ -64,28 +86,6 @@ File tree:
     └── Counter
         └── index.jsx
 ```
-
-This module exports 3 constructs that can be imported for a particular framework in different parts of your app.
-
-```javascript
-import { 
-  builtInActions, 
-  PageProvider, 
-  useAppContext 
-} from '@gluecodes/storecle/react'
-```
-
-or 
-
-```javascript
-import { 
-  builtInActions, 
-  PageProvider, 
-  useAppContext 
-} from '@gluecodes/storecle/solid'
-```
-
-For the purpose of the example I used a Solid version. 
 
 ### Mental Model
 
