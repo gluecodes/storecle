@@ -70,6 +70,8 @@ For the purpose of the example I used a Solid version.
 
 Soon the official starter templates will be released. Using this library means following certain patterns which are explained below using a simple counter example. 
 
+### Mental Model
+
 File tree:
 
 ```
@@ -86,8 +88,6 @@ File tree:
     └── Counter
         └── index.jsx
 ```
-
-### Mental Model
 
 #### 1. Page Container
 
