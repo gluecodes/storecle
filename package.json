@@ -44,5 +44,22 @@
     "webpack": "^5.53.0",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.2.1"
+  },
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./src/index.js"
+    },
+    "./react": {
+      "import": "./src/react.js",
+      "require": "./src/react.js"
+    },
+    "./solid": {
+      "import": "./src/solid.js",
+      "require": "./src/solid.js"
+    }
   }
 }

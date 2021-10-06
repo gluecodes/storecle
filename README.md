@@ -63,7 +63,31 @@ File tree:
         └── index.jsx
 ```
 
-### 1. Page Container
+This module exports 3 constructs that can be imported for a particular framework in different parts of your app.
+
+```javascript
+import { 
+  builtInActions, 
+  PageProvider, 
+  useAppContext 
+} from '@gluecodes/storecle/react'
+```
+
+or 
+
+```javascript
+import { 
+  builtInActions, 
+  PageProvider, 
+  useAppContext 
+} from '@gluecodes/storecle/solid'
+```
+
+For the purpose of the example I used a Solid version. 
+
+### Mental Model
+
+#### 1. Page Container
 
 Page provider wraps a given Layout around a single app context.
 
@@ -77,7 +101,7 @@ Page provider wraps a given Layout around a single app context.
 `./index.jsx`
 
 ```javascript
-import { PageProvider } from '@gluecodes/storecle'
+import { PageProvider } from '@gluecodes/storecle/solid'
 
 import * as dataSuppliers from './actions/dataSuppliers/index'
 import * as userActions from './actions/userActions/index'
@@ -106,7 +130,7 @@ export default function App () {
 }
 ```
 
-### 2. Data Suppliers
+#### 2. Data Suppliers
 
 Data suppliers return data prior to rendering. Note the early returns which demonstrate how to resolve cached data based on Reload Type.
 
@@ -123,7 +147,7 @@ Data suppliers return data prior to rendering. Note the early returns which demo
 
 ```javascript
 
-import { builtInActions } from '@gluecodes/storecle'
+import { builtInActions } from '@gluecodes/storecle/solid'
 import { reFetchCounter } from '../reloadTypes'
 
 
@@ -149,7 +173,7 @@ export function getTexts (resultOf) {
 }
 ```
 
-### 3. User Actions
+#### 3. User Actions
 
 Actions triggered by a user.
 
@@ -161,7 +185,7 @@ export function incrementCounter (counter) {
 }
 ```
 
-### 4. Reload Types
+#### 4. Reload Types
 
 A way to tell the app to re-run Data Suppliers based on executed User Actions.
 
@@ -183,7 +207,7 @@ export const reFetchCounter = (nameOf) => [
 
 ```
 
-### 5. Layout
+#### 5. Layout
 
 Nothing else than the page layout.
 
@@ -200,7 +224,7 @@ export default () => (
 
 ```
 
-### 6. Partials
+#### 6. Partials
 
 Partials are self-contained pieces of UI which have access to app state via the app context.
 
@@ -212,7 +236,7 @@ Partials are self-contained pieces of UI which have access to app state via the 
 `./partials/Counter/index.jsx`
 
 ```jsx
-import { useAppContext } from '@gluecodes/storecle'
+import { useAppContext } from '@gluecodes/storecle/solid'
 
 import { getCounter, getTexts } from './actions/dataSuppliers/index'
 import { incrementCounter } from './actions/userActions/index'
