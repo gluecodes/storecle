@@ -25,10 +25,14 @@ jobs:
           sudo rm -rf /var/lib/apt/lists/*
           sudo wget --quiet https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/sbin/wait-for-it.sh
           sudo chmod +x /usr/sbin/wait-for-it.sh
+      - run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
       - run: yarn start & sleep 5 && yarn test
         working-directory: ./test/env/react
       - run: yarn start & sleep 5 && yarn test
         working-directory: ./test/env/solid
+      - run: echo $(jq -s '.[0] * .[1]' package.json packageProdOverrides.json) > package.json
       - run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
