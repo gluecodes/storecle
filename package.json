@@ -1,7 +1,6 @@
 {
   "name": "@gluecodes/storecle",
   "version": "0.1.3",
-  "type": "module",
   "description": "A neat uni-directional app state management for React and Solid.",
   "main": "./src/index.js",
   "repository": {
@@ -9,7 +8,7 @@
     "url": "https://github.com/gluecodes/storecle.git"
   },
   "scripts": {
-    "postinstall": "[ -d test ] && (cd test/env/react && yarn install) || exit 0; [ -d test ] && (cd test/env/solid && yarn install) || exit 0;",
+    "postinstall": "(cd test/env/react && yarn install); (cd test/env/solid && yarn install);",
     "start": "(cd test/env/react && yarn start) & (cd test/env/solid && yarn start);",
     "lint": "eslint . --ext .js --ext .jsx",
     "test:react": "export FRAMEWORK=react && mocha './test/features/**/*.js' --timeout 60000",
