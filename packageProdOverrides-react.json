@@ -1,0 +1,15 @@
+{
+  "name": "@gluecodes/storecle-react",
+  "type": "module",
+  "main": "./src/react.js",
+  "browser": "./src/solid.js",
+  "exports": {
+    ".": {
+      "import": "./src/react.js",
+      "require": "./src/react.js"
+    }
+  },
+  "scripts": {
+    "postinstall": "exit 0"
+  }
+}
