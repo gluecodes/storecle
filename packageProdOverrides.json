@@ -1,6 +1,0 @@
-{
-  "type": "module",
-  "scripts": {
-    "postinstall": "exit 0"
-  }
-}

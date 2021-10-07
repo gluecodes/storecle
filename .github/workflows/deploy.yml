@@ -32,7 +32,9 @@ jobs:
         working-directory: ./test/env/react
       - run: yarn start & sleep 5 && yarn test
         working-directory: ./test/env/solid
-      - run: echo $(jq -s '.[0] * .[1]' package.json packageProdOverrides.json) > package.json
+      - run: echo $(jq -s '.[0] * .[1]' package.json packageProdOverrides-react.json) > package.json
+      - run: yarn publish
+      - run: echo $(jq -s '.[0] * .[1]' package.json packageProdOverrides-solid.json) > package.json
       - run: yarn publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

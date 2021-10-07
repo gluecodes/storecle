@@ -32,14 +32,28 @@ I :heart: Redux, but it leaves plenty of room to be misused. Hence, Storecle is 
 
 ## Installation
 
+React:
+
 ```bash
-yarn add @gluecodes/storecle
+yarn add @gluecodes/storecle-react
 ```
 
 or 
 
 ```bash
-npm i @gluecodes/storecle
+npm i @gluecodes/storecle-react
+```
+
+Solid:
+
+```bash
+yarn add @gluecodes/storecle-solid
+```
+
+or
+
+```bash
+npm i @gluecodes/storecle-solid
 ```
 
 It works along with either [React](https://reactjs.org/) or [Solid](https://www.solidjs.com/) that also needs to be installed in your app. For details, see their own documentations.
@@ -53,7 +67,7 @@ import {
   builtInActions, 
   PageProvider, 
   useAppContext 
-} from '@gluecodes/storecle/react'
+} from '@gluecodes/storecle-react'
 ```
 
 or
@@ -63,7 +77,7 @@ import {
   builtInActions, 
   PageProvider, 
   useAppContext 
-} from '@gluecodes/storecle/solid'
+} from '@gluecodes/storecle-solid'
 ```
 
 For the purpose of the example I used a Solid version.
@@ -103,7 +117,7 @@ Page provider wraps a given Layout around a single app context.
 `./index.jsx`
 
 ```javascript
-import { PageProvider } from '@gluecodes/storecle/solid'
+import { PageProvider } from '@gluecodes/storecle-solid'
 
 import * as dataSuppliers from './actions/dataSuppliers/index'
 import * as userActions from './actions/userActions/index'
@@ -149,7 +163,7 @@ Data suppliers return data prior to rendering. Note the early returns which demo
 
 ```javascript
 
-import { builtInActions } from '@gluecodes/storecle/solid'
+import { builtInActions } from '@gluecodes/storecle-solid'
 import { reFetchCounter } from '../reloadTypes'
 
 
@@ -238,7 +252,7 @@ Partials are self-contained pieces of UI which have access to app state via the 
 `./partials/Counter/index.jsx`
 
 ```jsx
-import { useAppContext } from '@gluecodes/storecle/solid'
+import { useAppContext } from '@gluecodes/storecle-solid'
 
 import { getCounter, getTexts } from './actions/dataSuppliers/index'
 import { incrementCounter } from './actions/userActions/index'

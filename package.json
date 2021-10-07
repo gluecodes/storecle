@@ -1,8 +1,8 @@
 {
   "name": "@gluecodes/storecle",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A neat uni-directional app state management for React and Solid.",
-  "main": "./src/index.js",
+  "main": "./src/solid.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/gluecodes/storecle.git"
@@ -47,19 +47,5 @@
   },
   "files": [
     "src"
-  ],
-  "exports": {
-    ".": {
-      "import": "./src/index.js",
-      "require": "./src/index.js"
-    },
-    "./react": {
-      "import": "./src/react.js",
-      "require": "./src/react.js"
-    },
-    "./solid": {
-      "import": "./src/solid.js",
-      "require": "./src/solid.js"
-    }
-  }
+  ]
 }

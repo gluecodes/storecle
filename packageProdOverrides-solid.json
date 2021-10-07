@@ -1,0 +1,15 @@
+{
+  "name": "@gluecodes/storecle-solid",
+  "type": "module",
+  "main": "./src/solid.js",
+  "browser": "./src/solid.js",
+  "exports": {
+    ".": {
+      "import": "./src/solid.js",
+      "require": "./src/solid.js"
+    }
+  },
+  "scripts": {
+    "postinstall": "exit 0"
+  }
+}
