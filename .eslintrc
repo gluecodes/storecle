@@ -1,7 +1,28 @@
 {
-  "extends": "standard",
+  "extends": [
+    "standard",
+    "standard-jsx",
+    "standard-react",
+    "plugin:react-hooks/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
   "env": {
+    "browser": true,
     "es6": true,
     "mocha": true
+  },
+  "plugins": [
+    "react-hooks"
+  ],
+  "rules": {
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "17.0.2"
+    }
   }
 }

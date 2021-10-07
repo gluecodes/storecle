@@ -73,3 +73,5 @@ nbproject
 .node_history
 
 dist/
+test/env/react/dist
+test/env/solid/dist

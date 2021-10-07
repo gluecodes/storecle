@@ -1,0 +1,11 @@
+{
+  "bulkUserActionTrigger": "bulkUserActionTrigger",
+  "firstDataSupplierResult": "firstDataSupplierResult",
+  "firstUserActionResult": "firstUserActionResult",
+  "firstUserActionTrigger": "firstUserActionTrigger",
+  "incomingDataSupplyTrigger": "incomingDataSupplyTrigger",
+  "incomingDataSupplierResult": "incomingDataSupplierResult",
+  "secondDataSupplierResult": "secondDataSupplierResult",
+  "secondUserActionResult": "secondUserActionResult",
+  "secondUserActionTrigger": "secondUserActionTrigger"
+}

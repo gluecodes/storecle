@@ -1,1 +1,3 @@
 dist/
+test/env/react/node_modules
+test/env/solid/node_modules

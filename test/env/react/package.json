@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "start": "../../../node_modules/.bin/webpack-dev-server --config ../webpack.config.js --mode development",
+    "build": "../../../node_modules/.bin/webpack --config ../webpack.config.js --mode development",
+    "test": "cd ../../../ && yarn test:react"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.14.5"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
