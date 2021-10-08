@@ -2,7 +2,7 @@
   "name": "@gluecodes/storecle-react",
   "type": "module",
   "main": "./src/react.js",
-  "browser": "./src/solid.js",
+  "browser": "./src/react.js",
   "exports": {
     ".": {
       "import": "./src/react.js",
