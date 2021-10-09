@@ -84,9 +84,13 @@ import {
 
 For the purpose of the example I used a Solid version.
 
-Soon the official starter templates will be released. Using this library means following certain patterns which are explained below using a simple counter example. 
+Soon the official starter templates will be released. Using this library means following certain patterns which are explained below using a simple counter example.
 
 ### Mental Model
+
+See: [Code Sandbox](https://codesandbox.io/s/bold-carlos-tj18g?file=/src/App.js) for a React implementation.
+
+I'll drop a Solid example here soon.
 
 File tree:
 
@@ -129,28 +133,26 @@ import Layout from './Layout.jsx'
 
 
 
-export default function App () {
-  return (
-    <PageProvider
-      dataSupplierPipeline={[
-        dataSuppliers.getTexts,
-        dataSuppliers.getCounterValue
-      ]}
-      dataSuppliers={dataSuppliers}
-      getLayout={() => Layout}
-      reloadTypes={reloadTypes}
-      userActions={userActions}
-      onError={(err) => {
-        console.error(err)
-      }}
-    />
-  )
-}
+export default () => (
+  <PageProvider
+    dataSupplierPipeline={[
+      dataSuppliers.getTexts,
+      dataSuppliers.getCounter
+    ]}
+    dataSuppliers={dataSuppliers}
+    getLayout={() => Layout}
+    reloadTypes={reloadTypes}
+    userActions={userActions}
+    onError={(err) => {
+      console.error(err)
+    }}
+  />
+)
 ```
 
 #### 2. Data Suppliers
 
-Data suppliers return data prior to rendering. Note the early returns which demonstrate how to resolve cached data based on Reload Type.
+Data suppliers provide data prior to rendering. Note the early returns which demonstrate how to resolve cached data based on Reload Type.
 
 - `buildInActions` - an object containing the following built-in User Actions:
   - `onStoreChanged` - a function which receives a callback to be triggered when Store changes.
@@ -171,7 +173,11 @@ import { reFetchCounter } from '../reloadTypes'
 
 
 export function getCounter (resultOf, nameOf) {
-  if (resultOf(builtInActions.runDataSuppliers) !== nameOf(reFetchCounter)) {
+  const reloadType = resultOf(builtInActions.runDataSuppliers)
+  const shouldFetch =
+    reloadType === 'full' || reloadType === nameOf(reFetchCounter)
+  
+  if (!shouldFetch) {
     return resultOf(getCounter)
   }
   
@@ -181,7 +187,7 @@ export function getCounter (resultOf, nameOf) {
 
 
 export function getTexts (resultOf) {
-  if (resultOf(builtInActions.runDataSuppliers) === 'full') {
+  if (resultOf(builtInActions.runDataSuppliers) !== 'full') {
     return resultOf(getTexts)
   }
   
@@ -199,7 +205,11 @@ Actions triggered by a user.
 
 ```javascript
 export function incrementCounter (counter) {
-  global.sessionStorage.setItem('appWideCounter', parseInt(counter, 10) + 1)
+  const incrementedCounter = parseInt(counter, 10) + 1
+
+  global.sessionStorage.setItem('appWideCounter', incrementedCounter)
+
+  return incrementedCounter
 }
 ```
 
@@ -210,7 +220,7 @@ A way to tell the app to re-run Data Suppliers based on executed User Actions.
 
 - A Reload Type groups User Actions together to tell the app to reload all Data Suppliers as a consequence of their execution.
 - When any of its User Actions is triggered, the app sets the Reload Type name under built-in `runDataSuppliers` and reloads all Data Suppliers. 
-- Data Suppliers can benefit from caching by early returning their results based on Reload Type name e.g. `resultOf(builtInActions.runDataSuppliers) !== nameOf(reFetchCounter)`.
+- Data Suppliers can benefit from caching by early returning their results based on Reload Type name.
 - Each Reload Type is a function which passes `nameOf` and returns an array of User Action names.
     - `nameOf` - a function providing a name of User Action.
 
@@ -256,8 +266,8 @@ Partials are self-contained pieces of UI which have access to app state via the 
 ```jsx
 import { useAppContext } from '@gluecodes/storecle-solid'
 
-import { getCounter, getTexts } from './actions/dataSuppliers/index'
-import { incrementCounter } from './actions/userActions/index'
+import { getCounter, getTexts } from '../../actions/dataSuppliers/index'
+import { incrementCounter } from '../../actions/userActions/index'
 
 
 
@@ -271,7 +281,7 @@ export default () => {
           resultOf(getCounter)
         )
       }}
-    >{resultOf(getTexts).Click}: {resultOf(getCounter)}</button>
+    >{resultOf(getTexts)?.Click}: {resultOf(getCounter)}</button>
   )
 }
 ```
