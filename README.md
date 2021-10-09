@@ -2,6 +2,8 @@
 
 **@gluecodes/storecle**
 
+[![NPM Version](https://img.shields.io/npm/v/@gluecodes/storecle-solid.svg?style=flat)](https://www.npmjs.com/package/@gluecodes/storecle-solid)
+
 A neat uni-directional app state management for [React](https://reactjs.org/) and [Solid](https://www.solidjs.com/) (:heart:).
 
 ## Features
@@ -244,7 +246,7 @@ export default () => (
 
 Partials are self-contained pieces of UI which have access to app state via the app context.
 
-- `useAppContext` - a function which returns an array of 2 items: `resultOf`, `action`, `nameOf`. 
+- `useAppContext` - a function which returns an array of 3 items: `resultOf`, `action`, `nameOf`. 
     - `resultOf` - a function providing a result of a given Data Supplier or User Action.
     - `action` - a function which triggers User Action.
     - `nameOf` - a function providing a name of either Data Supplier or User Action.
@@ -269,7 +271,7 @@ export default () => {
           resultOf(getCounter)
         )
       }}
-    >{resultOf(getCounter).Click}: {resultOf(getCounter)}</button>
+    >{resultOf(getTexts).Click}: {resultOf(getCounter)}</button>
   )
 }
 ```
