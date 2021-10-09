@@ -90,7 +90,7 @@ Soon the official starter templates will be released. Using this library means f
 
 See: [Code Sandbox](https://codesandbox.io/s/bold-carlos-tj18g?file=/src/App.js) for a React implementation.
 
-I'll drop Solid example here soon.
+I'll drop a Solid example here soon.
 
 File tree:
 
