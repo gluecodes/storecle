@@ -88,9 +88,9 @@ Soon the official starter templates will be released. Using this library means f
 
 ### Mental Model
 
-See: [Code Sandbox](https://codesandbox.io/s/bold-carlos-tj18g?file=/src/App.js) for a React implementation.
+> See: [Code Sandbox](https://codesandbox.io/s/bold-carlos-tj18g?file=/src/App.js) example for React.
 
-I'll drop a Solid example here soon.
+> See: [Code Sandbox](https://codesandbox.io/s/awesome-hertz-jdcgg?file=/src/App.jsx) example for Solid.
 
 File tree:
 
