@@ -150,4 +150,14 @@ describe('app state manipulation', () => {
     expect(lastDomMutation.parentElementClassName).to.equal(elementClassNames.firstUserActionResult)
     expect(lastDomMutation.affectedText).to.equal('3')
   })
+
+  it('should run user actions in bulk', async () => {
+    await env.page.click(`.${elementClassNames.bulkUserActionTrigger}`)
+
+    expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
+      .to.equal('1')
+
+    expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
+      .to.equal('1')
+  })
 })
