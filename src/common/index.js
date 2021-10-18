@@ -40,6 +40,7 @@ export default ({
   const storeChangedEventTarget = new EventTarget()
   const storeChangedEventListeners = []
   const store = initialStore
+  const userActionCounts = {}
   let shouldAbortDataSuppliers = false
 
   const userActionsProxy = new Proxy(
@@ -55,16 +56,18 @@ export default ({
 
           setInStore('userActionBeingExecuted', actionName)
 
+          userActionCounts[actionName] = ++userActionCounts[actionName] || 1
+
           if (actionBeingExecuted instanceof Promise) {
             return actionBeingExecuted
               .then((result) => {
-                setInStore(actionName, result)
+                setInStore(actionName, userActionCounts[actionName])
                 return result
               })
               .catch(handleError)
           }
 
-          setInStore(actionName, actionBeingExecuted)
+          setInStore(actionName, userActionCounts[actionName])
           return actionBeingExecuted
         } catch (err) {
           handleError(err)

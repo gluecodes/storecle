@@ -61,11 +61,11 @@ describe('app state manipulation', () => {
     })
 
     expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
-      .to.equal('done this')
+      .to.equal('1')
 
     expect(lastDomMutation.type).to.equal('childList')
     expect(lastDomMutation.affectedElementClassName).to.equal(elementClassNames.firstUserActionResult)
-    expect(lastDomMutation.innerText).to.equal('done this')
+    expect(lastDomMutation.innerText).to.equal('1')
 
     expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
       .to.equal('')
@@ -91,11 +91,11 @@ describe('app state manipulation', () => {
     })
 
     expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
-      .to.equal('done that')
+      .to.equal('1')
 
     expect(lastDomMutation.type).to.equal('childList')
     expect(lastDomMutation.affectedElementClassName).to.equal(elementClassNames.secondUserActionResult)
-    expect(lastDomMutation.innerText).to.equal('done that')
+    expect(lastDomMutation.innerText).to.equal('1')
 
     expect(firstDataSupplierTriggersCount).to.equal(2)
     expect(secondDataSupplierTriggersCount).to.equal(2)
@@ -132,5 +132,22 @@ describe('app state manipulation', () => {
 
       expect(incomingDataSupplierInitializationsCount).to.equal(1)
     }
+  })
+
+  it('should store user action count', async () => {
+    await env.page.click(`.${elementClassNames.firstUserActionTrigger}`)
+    await env.page.click(`.${elementClassNames.firstUserActionTrigger}`)
+    await env.page.click(`.${elementClassNames.firstUserActionTrigger}`)
+
+    const lastDomMutation = await env.fetchAppChangeHistory({
+      snapshotType: appChangeHistorySnapshotTypes.lastDomMutation
+    })
+
+    expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
+      .to.equal('3')
+
+    expect(lastDomMutation.type).to.equal('characterData')
+    expect(lastDomMutation.parentElementClassName).to.equal(elementClassNames.firstUserActionResult)
+    expect(lastDomMutation.affectedText).to.equal('3')
   })
 })
