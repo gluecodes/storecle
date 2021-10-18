@@ -16,7 +16,7 @@ Then, their results are accessible by their own names.
 To improve the code re-usability, Data Suppliers use a middleware pattern. They are executed in the order you specify and pass a snapshot of Store from one to another, letting you split the logic into small, specified functions.
 
 - It works with both [React](https://reactjs.org/) and [Solid](https://www.solidjs.com/) (it's framework agnostic to certain degree).
-- It uses Context API and `useEffect` to provide action re-triggers based on specified Store changes.
+- It uses Context API and `useEffect` / `createEffect` to provide action re-triggers based on specified Store changes.
 - It facilitates splitting the business logic into granual, re-usable functions by applying a middleware pattern.
 - It simplifies naming and reduces noise by letting you access action results by their own names.
 - It provides an elegant approach to actions feeding UI with incoming data (e.g. from Web Sockets).
@@ -208,8 +208,6 @@ export function incrementCounter (counter) {
   const incrementedCounter = parseInt(counter, 10) + 1
 
   global.sessionStorage.setItem('appWideCounter', incrementedCounter)
-
-  return incrementedCounter
 }
 ```
 
@@ -292,4 +290,4 @@ WIP, so far there is only this `README.md` and a project `./test/env`. More docs
 
 ## License
 
-MIT
+[MIT](https://github.com/gluecodes/storecle/blob/master/LICENSE.md)
