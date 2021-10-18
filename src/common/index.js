@@ -215,11 +215,13 @@ export default ({
           const [actionName, ...args] = itemToRun
           const actionBeingExecuted = userActions[actionName](...args)
 
+          userActionCounts[actionName] = ++userActionCounts[actionName] || 1
+
           if (actionBeingExecuted instanceof Promise) {
-            userActionResults[actionName] = await actionBeingExecuted
-          } else {
-            userActionResults[actionName] = actionBeingExecuted
+            await actionBeingExecuted
           }
+
+          userActionResults[actionName] = userActionCounts[actionName]
         }
 
         updateStore((actionResults) => ({

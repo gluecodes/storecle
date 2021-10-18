@@ -205,7 +205,7 @@ Actions triggered by a user.
 
 ```javascript
 export function incrementCounter (counter) {
-  const incrementedCounter = parseInt(counter, 10) + 1
+  const incrementedCounter = Number(counter) + 1
 
   global.sessionStorage.setItem('appWideCounter', incrementedCounter)
 }
