@@ -19,12 +19,12 @@ export default ({
 
   const { cleanup, context, nameOf, runDataSuppliers } = initPage({
     handleError: onError,
-    initialStore: store,
     reloadTypes,
+    storeRef: { store },
     dataSupplierPipeline,
     dataSuppliers,
     userActions,
-    ...adaptForSolid(updateStore, store)
+    ...adaptForSolid(updateStore, { store })
   })
 
   runDataSuppliers()

@@ -1,8 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useReducer, useRef } from 'react'
 
 import initPage, { adaptForReact } from '../common/index'
 import { AppProvider } from './appContext'
+
+const reducer = (state, action) => {
+  if (action.type === 'bulkUpdate') {
+    return {
+      ...state,
+      ...action.result
+    }
+  }
+
+  return {
+    ...state,
+    [action.type]: action.result
+  }
+}
 
 export default ({
   dataSupplierPipeline,
@@ -13,9 +27,11 @@ export default ({
   userActions,
   onError
 }) => {
-  const [store, updateStore] = useState({
+  const [store, updateStore] = useReducer(reducer, {
     ...initialState
   })
+
+  const storeRef = useRef({ store })
 
   const { cleanup, context, nameOf, runDataSuppliers } = useMemo(
     () =>
@@ -23,10 +39,10 @@ export default ({
         dataSupplierPipeline,
         dataSuppliers,
         handleError: onError,
-        initialStore: store,
         reloadTypes,
+        storeRef: storeRef.current,
         userActions,
-        ...adaptForReact(updateStore, store)
+        ...adaptForReact(updateStore, storeRef.current)
       }),
     []
   )
@@ -53,7 +69,11 @@ export default ({
     ).map((actionName) => store[actionName])
   )
 
-  useEffect(() => () => cleanup(), [global.location.pathname, cleanup])
+  useEffect(() => () => cleanup(), [global.location.pathname])
+
+  if (storeRef.current.store !== store) {
+    storeRef.current.store = store
+  }
 
   return (
     <AppProvider value={context}>

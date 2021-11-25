@@ -1,13 +1,14 @@
-export const adaptForReact = (updateStore, store) => ({
+export const adaptForReact = (updateStore, storeRef) => ({
   updateStore: (keyName, result) => {
     if (typeof keyName === 'function') {
-      Object.assign(store, keyName(store))
       updateStore({
-        ...store
+        type: 'bulkUpdate',
+        result: keyName(storeRef.store)
       })
+    } else if (['runDataSuppliers', 'userActionBeingExecuted'].includes(keyName)) {
+      storeRef.store[keyName] = result
     } else {
-      store[keyName] = result
-      updateStore({ ...store })
+      updateStore({ type: keyName, result })
     }
   }
 })
@@ -32,14 +33,13 @@ export default ({
   dataSupplierPipeline,
   dataSuppliers,
   handleError,
-  initialStore = {},
   reloadTypes,
+  storeRef,
   updateStore,
   userActions
 }) => {
   const storeChangedEventTarget = new EventTarget()
   const storeChangedEventListeners = []
-  const store = initialStore
   const userActionCounts = {}
   let shouldAbortDataSuppliers = false
 
@@ -121,7 +121,7 @@ export default ({
         (actionName) => builtInActions[actionName] === action
       )
 
-    return store[actionName]
+    return storeRef.store[actionName]
   }
 
   const dispatchAction = (action) => {
@@ -244,14 +244,14 @@ export default ({
   })
 
   return {
-    context: [getActionResult, dispatchAction, getNameOfAction],
-    runDataSuppliers,
-    nameOf: getNameOfAction,
     cleanup: () => {
       shouldAbortDataSuppliers = true
       storeChangedEventListeners.forEach((listener) => {
         storeChangedEventTarget.removeEventListener('storeChanged', listener)
       })
-    }
+    },
+    context: [getActionResult, dispatchAction, getNameOfAction],
+    nameOf: getNameOfAction,
+    runDataSuppliers
   }
 }
