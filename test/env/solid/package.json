@@ -5,9 +5,9 @@
     "test": "cd ../../../ && yarn test:solid"
   },
   "devDependencies": {
-    "babel-preset-solid": "^1.1.5"
+    "babel-preset-solid": "^1.2.5"
   },
   "dependencies": {
-    "solid-js": "^1.1.5"
+    "solid-js": "^1.2.5"
   }
 }
