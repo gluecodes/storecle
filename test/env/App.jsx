@@ -6,7 +6,7 @@ import * as reloadTypes from './actions/reloadTypes'
 
 import Layout from './Layout.jsx'
 
-export default function App () {
+export default () => {
   return (
     <PageProvider
       dataSupplierPipeline={[

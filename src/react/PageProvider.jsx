@@ -33,7 +33,7 @@ export default ({
 
   const storeRef = useRef({ store })
 
-  const { cleanup, context, nameOf, runDataSuppliers } = useMemo(
+  const { context, nameOf, runDataSuppliers } = useMemo(
     () =>
       initPage({
         dataSupplierPipeline,
@@ -52,8 +52,7 @@ export default ({
       const reloadType = Object.keys(reloadTypes).find((type) =>
         reloadTypes[type](nameOf).some(
           (actionName) =>
-            store.userActionBeingExecuted === actionName &&
-            store[actionName]
+            store.userActionBeingExecuted === actionName && store[actionName]
         )
       )
 
@@ -68,8 +67,6 @@ export default ({
       )
     ).map((actionName) => store[actionName])
   )
-
-  useEffect(() => () => cleanup(), [global.location.pathname])
 
   if (storeRef.current.store !== store) {
     storeRef.current.store = store

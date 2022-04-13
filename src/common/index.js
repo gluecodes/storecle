@@ -5,7 +5,9 @@ export const adaptForReact = (updateStore, storeRef) => ({
         type: 'bulkUpdate',
         result: keyName(storeRef.store)
       })
-    } else if (['runDataSuppliers', 'userActionBeingExecuted'].includes(keyName)) {
+    } else if (
+      ['runDataSuppliers', 'userActionBeingExecuted'].includes(keyName)
+    ) {
       storeRef.store[keyName] = result
     } else {
       updateStore({ type: keyName, result })
@@ -46,33 +48,35 @@ export default ({
   const userActionsProxy = new Proxy(
     {},
     {
-      get: (_, actionName) => (...args) => {
-        try {
-          if (builtInActions[actionName]) {
-            return builtInActions[actionName](...args)
+      get:
+        (_, actionName) =>
+          (...args) => {
+            try {
+              if (builtInActions[actionName]) {
+                return builtInActions[actionName](...args)
+              }
+
+              const actionBeingExecuted = userActions[actionName](...args)
+
+              setInStore('userActionBeingExecuted', actionName)
+
+              userActionCounts[actionName] = ++userActionCounts[actionName] || 1
+
+              if (actionBeingExecuted instanceof Promise) {
+                return actionBeingExecuted
+                  .then((result) => {
+                    setInStore(actionName, userActionCounts[actionName])
+                    return result
+                  })
+                  .catch(handleError)
+              }
+
+              setInStore(actionName, userActionCounts[actionName])
+              return actionBeingExecuted
+            } catch (err) {
+              handleError(err)
+            }
           }
-
-          const actionBeingExecuted = userActions[actionName](...args)
-
-          setInStore('userActionBeingExecuted', actionName)
-
-          userActionCounts[actionName] = ++userActionCounts[actionName] || 1
-
-          if (actionBeingExecuted instanceof Promise) {
-            return actionBeingExecuted
-              .then((result) => {
-                setInStore(actionName, userActionCounts[actionName])
-                return result
-              })
-              .catch(handleError)
-          }
-
-          setInStore(actionName, userActionCounts[actionName])
-          return actionBeingExecuted
-        } catch (err) {
-          handleError(err)
-        }
-      }
     }
   )
   const setInStore = (actionName, result) => {
@@ -173,9 +177,8 @@ export default ({
           )
           actionBeingExecuted({
             asyncResults: liveDataSuppliers.promises,
-            hasBeenInitialized: liveDataSuppliers.initialized.includes(
-              actionName
-            ),
+            hasBeenInitialized:
+              liveDataSuppliers.initialized.includes(actionName),
             supply: (data) => incomingDataProvided(actionName, data)
           })
           liveDataSuppliers.initialized.push(actionName)
@@ -198,6 +201,13 @@ export default ({
     } catch (err) {
       handleError(err)
     }
+  }
+
+  const cleanup = () => {
+    shouldAbortDataSuppliers = true
+    storeChangedEventListeners.forEach((listener) => {
+      storeChangedEventTarget.removeEventListener('storeChanged', listener)
+    })
   }
 
   Object.assign(builtInActions, {
@@ -244,13 +254,7 @@ export default ({
   })
 
   return {
-    cleanup: () => {
-      shouldAbortDataSuppliers = true
-      storeChangedEventListeners.forEach((listener) => {
-        storeChangedEventTarget.removeEventListener('storeChanged', listener)
-      })
-    },
-    context: [getActionResult, dispatchAction, getNameOfAction],
+    context: [getActionResult, dispatchAction, getNameOfAction, cleanup],
     nameOf: getNameOfAction,
     runDataSuppliers
   }
