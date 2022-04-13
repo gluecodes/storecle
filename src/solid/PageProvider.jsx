@@ -1,4 +1,4 @@
-import { createEffect, onCleanup } from 'solid-js'
+import { createEffect } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 import initPage, { adaptForSolid } from '../common/index'
@@ -17,14 +17,14 @@ export default ({
     ...initialState
   })
 
-  const { cleanup, context, nameOf, runDataSuppliers } = initPage({
+  const { context, nameOf, runDataSuppliers } = initPage({
     handleError: onError,
     reloadTypes,
     storeRef: { store },
     dataSupplierPipeline,
     dataSuppliers,
     userActions,
-    ...adaptForSolid(updateStore, { store })
+    ...adaptForSolid(updateStore)
   })
 
   runDataSuppliers()
@@ -33,8 +33,7 @@ export default ({
     const reloadType = Object.keys(reloadTypes).find((type) =>
       reloadTypes[type](nameOf).some(
         (actionName) =>
-          store.userActionBeingExecuted === actionName &&
-          store[actionName]
+          store.userActionBeingExecuted === actionName && store[actionName]
       )
     )
 
@@ -42,8 +41,6 @@ export default ({
       runDataSuppliers(reloadType)
     }
   })
-
-  onCleanup(() => cleanup())
 
   return <AppProvider value={context}>{getLayout()}</AppProvider>
 }
