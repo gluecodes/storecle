@@ -54,7 +54,7 @@ module.exports = {
   },
   devServer: {
     host: '0.0.0.0',
-    port: ({ react: 1234, solid: 4321 })[cwd],
+    port: { react: 1234, solid: 4321 }[cwd],
     static: {
       directory: path.resolve(__dirname, `./${cwd}/dist/`)
     },
@@ -75,5 +75,10 @@ module.exports = {
       react: path.resolve(__dirname, `${cwd}/node_modules/react`),
       'solid-js': path.resolve(__dirname, `${cwd}/node_modules/solid-js`)
     }
-  }
+  },
+  ...(process.env.NODE_ENV === 'local'
+    ? {
+      devtool: 'source-map'
+    }
+    : {})
 }
