@@ -56,7 +56,12 @@ export default ({
         )
       )
 
-      runDataSuppliers(reloadType)
+      const run = async () => {
+        await Promise.resolve() // ensures storeRef gets updated correctly when 1st supplier is sync
+        runDataSuppliers(reloadType)
+      }
+
+      run()
     },
     Array.from(
       new Set(
