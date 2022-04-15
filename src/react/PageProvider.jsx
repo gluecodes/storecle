@@ -55,8 +55,8 @@ export default ({
         const reloadType = Object.keys(reloadTypes).find((type) =>
           reloadTypes[type](nameOf).some(
             (actionName) =>
-              storeRef.current.store.userActionBeingExecuted === actionName &&
-              storeRef.current.store[actionName]
+              storeRef.current.store.userActionBeingExecuted?.[0] ===
+                actionName && storeRef.current.store[actionName]
           )
         )
 

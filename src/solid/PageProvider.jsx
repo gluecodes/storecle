@@ -33,7 +33,7 @@ export default ({
     const reloadType = Object.keys(reloadTypes).find((type) =>
       reloadTypes[type](nameOf).some(
         (actionName) =>
-          store.userActionBeingExecuted === actionName && store[actionName]
+          store.userActionBeingExecuted?.[0] === actionName && store[actionName]
       )
     )
 
