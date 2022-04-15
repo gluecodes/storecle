@@ -49,16 +49,17 @@ export default ({
 
   useEffect(
     () => {
-      const reloadType = Object.keys(reloadTypes).find((type) =>
-        reloadTypes[type](nameOf).some(
-          (actionName) =>
-            storeRef.current.store.userActionBeingExecuted === actionName &&
-            storeRef.current.store[actionName]
-        )
-      )
-
       const run = async () => {
         await Promise.resolve() // ensures storeRef gets updated correctly when 1st supplier is sync
+
+        const reloadType = Object.keys(reloadTypes).find((type) =>
+          reloadTypes[type](nameOf).some(
+            (actionName) =>
+              storeRef.current.store.userActionBeingExecuted === actionName &&
+              storeRef.current.store[actionName]
+          )
+        )
+
         runDataSuppliers(reloadType)
       }
 
