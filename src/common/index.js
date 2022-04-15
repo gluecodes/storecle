@@ -56,9 +56,11 @@ export default ({
                 return builtInActions[actionName](...args)
               }
 
+              const actionQueue = storeRef.store.userActionBeingExecuted || []
               const actionBeingExecuted = userActions[actionName](...args)
 
-              setInStore('userActionBeingExecuted', actionName)
+              actionQueue.push(actionName)
+              setInStore('userActionBeingExecuted', actionQueue)
 
               userActionCounts[actionName] = ++userActionCounts[actionName] || 1
 
@@ -66,12 +68,21 @@ export default ({
                 return actionBeingExecuted
                   .then((result) => {
                     setInStore(actionName, userActionCounts[actionName])
+                    setTimeout(() => {
+                      actionQueue.shift()
+                      setInStore('userActionBeingExecuted', actionQueue)
+                    }, 0)
+
                     return result
                   })
                   .catch(handleError)
               }
 
               setInStore(actionName, userActionCounts[actionName])
+              setTimeout(() => {
+                actionQueue.shift()
+                setInStore('userActionBeingExecuted', actionQueue)
+              }, 0)
               return actionBeingExecuted
             } catch (err) {
               handleError(err)
@@ -79,6 +90,7 @@ export default ({
           }
     }
   )
+
   const setInStore = (actionName, result) => {
     updateStore(actionName, result)
     storeChangedEventTarget.dispatchEvent(
@@ -89,11 +101,13 @@ export default ({
       })
     )
   }
+
   const liveDataSuppliers = {
     initialized: [],
     promises: {},
     resolvers: {}
   }
+
   const incomingDataProvided = (actionName, result) => {
     liveDataSuppliers.resolvers[actionName](result)
     setInStore(actionName, result)
