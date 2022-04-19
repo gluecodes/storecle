@@ -55,12 +55,9 @@ export default ({
               return builtInActions[actionName](...args)
             }
 
-            const actionQueue = storeRef.store.userActionBeingExecuted ? storeRef.store.userActionBeingExecuted.slice(0) : []
             const actionBeingExecuted = userActions[actionName](...args)
-
-            actionQueue.push(actionName)
-            setInStore('userActionBeingExecuted', actionQueue)
-
+            
+            setInStore('userActionBeingExecuted', [...storeRef.store.userActionBeingExecuted, actionName]) // pure push
             userActionCounts[actionName] = ++userActionCounts[actionName] || 1
 
             if (actionBeingExecuted instanceof Promise) {
@@ -68,8 +65,7 @@ export default ({
                 .then((result) => {
                   setInStore(actionName, userActionCounts[actionName])
                   setTimeout(() => {
-                    actionQueue.shift()
-                    setInStore('userActionBeingExecuted', actionQueue)
+                    setInStore('userActionBeingExecuted', storeRef.store.userActionBeingExecuted.slice(1)) // pure shift
                   }, 0)
 
                   return result
@@ -79,8 +75,7 @@ export default ({
 
             setInStore(actionName, userActionCounts[actionName])
             setTimeout(() => {
-              actionQueue.shift()
-              setInStore('userActionBeingExecuted', actionQueue)
+              setInStore('userActionBeingExecuted', storeRef.store.userActionBeingExecuted.slice(1)) // pure shift
             }, 0)
             return actionBeingExecuted
           } catch (err) {

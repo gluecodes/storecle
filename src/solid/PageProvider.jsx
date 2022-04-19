@@ -14,7 +14,8 @@ export default ({
   onError
 }) => {
   const [store, updateStore] = createStore({
-    ...initialState
+    ...initialState,
+    userActionBeingExecuted: []
   })
 
   const { context, nameOf, runDataSuppliers } = initPage({
