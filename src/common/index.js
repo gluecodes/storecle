@@ -5,11 +5,10 @@ export const adaptForReact = (updateStore, storeRef) => ({
         type: 'bulkUpdate',
         result: keyName(storeRef.store)
       })
-    } else if (
-      ['runDataSuppliers', 'userActionBeingExecuted'].includes(keyName)
-    ) {
+    } else if (['runDataSuppliers', 'userActionBeingExecuted'].includes(keyName)) {
       storeRef.store[keyName] = result
     } else {
+      storeRef.store[keyName] = result // React's Automatic Batching doesn't update store immediately, therefore modify ref which is passed among data suppliers
       updateStore({ type: keyName, result })
     }
   }
@@ -50,44 +49,44 @@ export default ({
     {
       get:
         (_, actionName) =>
-          (...args) => {
-            try {
-              if (builtInActions[actionName]) {
-                return builtInActions[actionName](...args)
-              }
-
-              const actionQueue = storeRef.store.userActionBeingExecuted || []
-              const actionBeingExecuted = userActions[actionName](...args)
-
-              actionQueue.push(actionName)
-              setInStore('userActionBeingExecuted', actionQueue)
-
-              userActionCounts[actionName] = ++userActionCounts[actionName] || 1
-
-              if (actionBeingExecuted instanceof Promise) {
-                return actionBeingExecuted
-                  .then((result) => {
-                    setInStore(actionName, userActionCounts[actionName])
-                    setTimeout(() => {
-                      actionQueue.shift()
-                      setInStore('userActionBeingExecuted', actionQueue)
-                    }, 0)
-
-                    return result
-                  })
-                  .catch(handleError)
-              }
-
-              setInStore(actionName, userActionCounts[actionName])
-              setTimeout(() => {
-                actionQueue.shift()
-                setInStore('userActionBeingExecuted', actionQueue)
-              }, 0)
-              return actionBeingExecuted
-            } catch (err) {
-              handleError(err)
+        (...args) => {
+          try {
+            if (builtInActions[actionName]) {
+              return builtInActions[actionName](...args)
             }
+
+            const actionQueue = storeRef.store.userActionBeingExecuted || []
+            const actionBeingExecuted = userActions[actionName](...args)
+
+            actionQueue.push(actionName)
+            setInStore('userActionBeingExecuted', actionQueue)
+
+            userActionCounts[actionName] = ++userActionCounts[actionName] || 1
+
+            if (actionBeingExecuted instanceof Promise) {
+              return actionBeingExecuted
+                .then((result) => {
+                  setInStore(actionName, userActionCounts[actionName])
+                  setTimeout(() => {
+                    actionQueue.shift()
+                    setInStore('userActionBeingExecuted', actionQueue)
+                  }, 0)
+
+                  return result
+                })
+                .catch(handleError)
+            }
+
+            setInStore(actionName, userActionCounts[actionName])
+            setTimeout(() => {
+              actionQueue.shift()
+              setInStore('userActionBeingExecuted', actionQueue)
+            }, 0)
+            return actionBeingExecuted
+          } catch (err) {
+            handleError(err)
           }
+        }
     }
   )
 
@@ -114,42 +113,24 @@ export default ({
   }
 
   const getNameOfAction = (action) =>
-    Object.keys(dataSuppliers).find(
-      (actionName) => dataSuppliers[actionName] === action
-    ) ||
-    Object.keys(userActions).find(
-      (actionName) => userActions[actionName] === action
-    ) ||
-    Object.keys(builtInActions).find(
-      (actionName) => builtInActions[actionName] === action
-    ) ||
-    Object.keys(reloadTypes).find(
-      (actionName) => reloadTypes[actionName] === action
-    )
+    Object.keys(dataSuppliers).find((actionName) => dataSuppliers[actionName] === action) ||
+    Object.keys(userActions).find((actionName) => userActions[actionName] === action) ||
+    Object.keys(builtInActions).find((actionName) => builtInActions[actionName] === action) ||
+    Object.keys(reloadTypes).find((actionName) => reloadTypes[actionName] === action)
 
   const getActionResult = (action) => {
     const actionName =
-      Object.keys(dataSuppliers).find(
-        (actionName) => dataSuppliers[actionName] === action
-      ) ||
-      Object.keys(userActions).find(
-        (actionName) => userActions[actionName] === action
-      ) ||
-      Object.keys(builtInActions).find(
-        (actionName) => builtInActions[actionName] === action
-      )
+      Object.keys(dataSuppliers).find((actionName) => dataSuppliers[actionName] === action) ||
+      Object.keys(userActions).find((actionName) => userActions[actionName] === action) ||
+      Object.keys(builtInActions).find((actionName) => builtInActions[actionName] === action)
 
     return storeRef.store[actionName]
   }
 
   const dispatchAction = (action) => {
     const actionName =
-      Object.keys(userActions).find(
-        (actionName) => userActions[actionName] === action
-      ) ||
-      Object.keys(builtInActions).find(
-        (actionName) => builtInActions[actionName] === action
-      )
+      Object.keys(userActions).find((actionName) => userActions[actionName] === action) ||
+      Object.keys(builtInActions).find((actionName) => builtInActions[actionName] === action)
 
     return userActionsProxy[actionName]
   }
@@ -163,36 +144,28 @@ export default ({
           return
         }
 
-        const actionName = Object.keys(dataSuppliers).find(
-          (actionName) => dataSuppliers[actionName] === action
-        )
+        const actionName = Object.keys(dataSuppliers).find((actionName) => dataSuppliers[actionName] === action)
 
-        const actionBeingExecuted = dataSuppliers[actionName](
-          getActionResult,
-          getNameOfAction
-        )
+        const actionBeingExecuted = dataSuppliers[actionName](getActionResult, getNameOfAction)
 
         if (actionBeingExecuted instanceof Promise) {
           setInStore(actionName, await actionBeingExecuted)
         } else if (typeof actionBeingExecuted === 'function') {
-          liveDataSuppliers.promises[actionName] = new Promise(
-            (resolve, reject) => {
-              setTimeout(
-                () =>
-                  reject(
-                    new Error(
-                      `UI data supplier: '${actionName}' didn't resolve within 20s, make sure all its preceding suppliers exist in the UI data supplier pipeline.`
-                    )
-                  ),
-                20000
-              )
-              liveDataSuppliers.resolvers[actionName] = resolve
-            }
-          )
+          liveDataSuppliers.promises[actionName] = new Promise((resolve, reject) => {
+            setTimeout(
+              () =>
+                reject(
+                  new Error(
+                    `UI data supplier: '${actionName}' didn't resolve within 20s, make sure all its preceding suppliers exist in the UI data supplier pipeline.`
+                  )
+                ),
+              20000
+            )
+            liveDataSuppliers.resolvers[actionName] = resolve
+          })
           actionBeingExecuted({
             asyncResults: liveDataSuppliers.promises,
-            hasBeenInitialized:
-              liveDataSuppliers.initialized.includes(actionName),
+            hasBeenInitialized: liveDataSuppliers.initialized.includes(actionName),
             supply: (data) => incomingDataProvided(actionName, data)
           })
           liveDataSuppliers.initialized.push(actionName)
@@ -205,9 +178,7 @@ export default ({
         new CustomEvent('storeChanged', {
           detail: {
             affectedKeys: Object.keys(dataSuppliers).filter((actionName) =>
-              dataSupplierPipeline.find(
-                (action) => action === dataSuppliers[actionName]
-              )
+              dataSupplierPipeline.find((action) => action === dataSuppliers[actionName])
             )
           }
         })
