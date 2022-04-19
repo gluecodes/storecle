@@ -55,7 +55,7 @@ export default ({
               return builtInActions[actionName](...args)
             }
 
-            const actionQueue = storeRef.store.userActionBeingExecuted || []
+            const actionQueue = storeRef.store.userActionBeingExecuted ? storeRef.store.userActionBeingExecuted.slice(0) : []
             const actionBeingExecuted = userActions[actionName](...args)
 
             actionQueue.push(actionName)
