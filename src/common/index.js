@@ -56,7 +56,7 @@ export default ({
             }
 
             const actionBeingExecuted = userActions[actionName](...args)
-            
+
             setInStore('userActionBeingExecuted', [...storeRef.store.userActionBeingExecuted, actionName]) // pure push
             userActionCounts[actionName] = ++userActionCounts[actionName] || 1
 
