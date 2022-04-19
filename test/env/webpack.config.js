@@ -45,10 +45,9 @@ module.exports = {
     })
   ],
   output: {
-    filename: '[name].bundle.js',
-    chunkFilename: '[name]-[chunkhash].chunk.js',
-    path: path.resolve(__dirname, `./${cwd}/dist/bundles/`),
-    publicPath: '/bundles/',
+    filename: 'bundles/[name].bundle.js',
+    chunkFilename: 'bundles/[name]-[chunkhash].chunk.js',
+    path: path.resolve(__dirname, `./${cwd}/dist/`),
     libraryTarget: 'umd',
     globalObject: 'this'
   },
@@ -59,6 +58,7 @@ module.exports = {
       directory: path.resolve(__dirname, `./${cwd}/dist/`)
     },
     hot: true,
+    liveReload: false,
     onBeforeSetupMiddleware: ({ app }) => {
       app.get('/', (req, res) => {
         res.send(getPageHtml())
@@ -70,6 +70,7 @@ module.exports = {
     poll: 3000
   },
   resolve: {
+    extensions: ['.js', '.jsx', '.json', '.mjs'],
     alias: {
       '@gluecodes/storecle': path.resolve(__dirname, `../../src/${cwd}.js`),
       react: path.resolve(__dirname, `${cwd}/node_modules/react`),

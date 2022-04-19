@@ -17,12 +17,19 @@
     "react-hooks"
   ],
   "rules": {
+    "indent": "off",
+    "jsx-quotes": [
+      "error",
+      "prefer-double"
+    ],
+    "multiline-ternary": "off",
+    "space-before-function-paren": "off",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off"
   },
   "settings": {
     "react": {
-      "version": "17.0.2"
+      "version": "18.0.0"
     }
   }
 }

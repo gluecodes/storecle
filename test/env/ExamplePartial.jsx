@@ -4,9 +4,9 @@ import {
   feedWithIncomingData,
   getThat,
   getThis
-} from './actions/dataSuppliers'
+} from './actions/dataSuppliers/dataSuppliers'
 
-import { doThat, doThis } from './actions/userActions'
+import { doThat, doThis } from './actions/userActions/userActions'
 
 import elementClassNames from './testHelpers/elementClassNames.json'
 

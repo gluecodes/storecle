@@ -27,8 +27,8 @@ To improve the code re-usability, Data Suppliers use a middleware pattern. They 
 I :heart: Redux, but it leaves plenty of room to be misused. Hence, Storecle is my proposal to let developers rely less on self-discipline and more on tooling and self-restrictive design.
 
 1. To provide an easy way of separating app-wide logic from views i.e.:
-    - No inline: data fetches, transformers, conditionals.
-    - No nested action dispatchers upon other action completion.
+   - No inline: data fetches, transformers, conditionals.
+   - No nested action dispatchers upon other action completion.
 2. To facilitate the action re-usability and modularization.
 3. To provide a gradual path for [React](https://reactjs.org/) developers willing to use [Solid](https://www.solidjs.com/).
 
@@ -40,7 +40,7 @@ React:
 yarn add @gluecodes/storecle-react
 ```
 
-or 
+or
 
 ```bash
 npm i @gluecodes/storecle-react
@@ -65,21 +65,13 @@ It works along with either [React](https://reactjs.org/) or [Solid](https://www.
 This module exports 3 constructs that can be imported for a particular framework in different parts of your app.
 
 ```javascript
-import { 
-  builtInActions, 
-  PageProvider, 
-  useAppContext 
-} from '@gluecodes/storecle-react'
+import { builtInActions, PageProvider, useAppContext } from '@gluecodes/storecle-react'
 ```
 
 or
 
 ```javascript
-import { 
-  builtInActions, 
-  PageProvider, 
-  useAppContext 
-} from '@gluecodes/storecle-solid'
+import { builtInActions, PageProvider, useAppContext } from '@gluecodes/storecle-solid'
 ```
 
 For the purpose of the example I used a Solid version.
@@ -98,15 +90,15 @@ File tree:
 .
 ├── actions
 │   ├── dataSuppliers (#2)
-│   │   └── index.js
+│   │   └── dataSuppliers.js
 │   ├── reloadTypes.js (#4)
 │   └── userActions (#3)
-│       └── index.js
+│       └── userActions.js
 ├── index.jsx (#1)
 ├── Layout.jsx (#5)
 └── partials (#6)
     └── Counter
-        └── index.jsx
+        └── Counter.jsx
 ```
 
 #### 1. Page Container
@@ -125,20 +117,15 @@ Page provider wraps a given Layout around a single app context.
 ```javascript
 import { PageProvider } from '@gluecodes/storecle-solid'
 
-import * as dataSuppliers from './actions/dataSuppliers/index'
-import * as userActions from './actions/userActions/index'
+import * as dataSuppliers from './actions/dataSuppliers/dataSuppliers'
+import * as userActions from './actions/userActions/userActions'
 import * as reloadTypes from './actions/reloadTypes'
 
 import Layout from './Layout.jsx'
 
-
-
 export default () => (
   <PageProvider
-    dataSupplierPipeline={[
-      dataSuppliers.getTexts,
-      dataSuppliers.getCounter
-    ]}
+    dataSupplierPipeline={[dataSuppliers.getTexts, dataSuppliers.getCounter]}
     dataSuppliers={dataSuppliers}
     getLayout={() => Layout}
     reloadTypes={reloadTypes}
@@ -154,43 +141,37 @@ export default () => (
 
 Data suppliers provide data prior to rendering. Note the early returns which demonstrate how to resolve cached data based on Reload Type.
 
-- `buildInActions` - an object containing the following built-in User Actions:
+- `builtInActions` - an object containing the following built-in User Actions:
   - `onStoreChanged` - a function which receives a callback to be triggered when Store changes.
   - `runUserActions` - a function which allows for executing multiple User Actions at once.
   - `runDataSuppliers` - a function which receives a Reload Type name. Note that it's exposed to ease the integration with legacy apps. Don't call it manually as Data Suppliers are implicitly reloaded based on the provided Reload Types.
 - Each Data Supplier passes two arguments: `resultOf` and `nameOf`.
-    - `resultOf` - a function providing a result of a given Data Supplier or User Action.
-    - `nameOf` - a function providing a name of either Data Supplier, User Action or Reload Type.
+  - `resultOf` - a function providing a result of a given Data Supplier or User Action.
+  - `nameOf` - a function providing a name of either Data Supplier, User Action or Reload Type.
 - Data Suppliers can be either sync or async and write to a central Store by returning/resolving.
 
-`./actions/dataSuppliers/index.js`
+`./actions/dataSuppliers/dataSuppliers.js`
 
 ```javascript
-
 import { builtInActions } from '@gluecodes/storecle-solid'
 import { reFetchCounter } from '../reloadTypes'
 
-
-
-export function getCounter (resultOf, nameOf) {
+export function getCounter(resultOf, nameOf) {
   const reloadType = resultOf(builtInActions.runDataSuppliers)
-  const shouldFetch =
-    reloadType === 'full' || reloadType === nameOf(reFetchCounter)
-  
+  const shouldFetch = reloadType === 'full' || reloadType === nameOf(reFetchCounter)
+
   if (!shouldFetch) {
     return resultOf(getCounter)
   }
-  
+
   return global.sessionStorage.getItem('appWideCounter') || 0
 }
 
-
-
-export function getTexts (resultOf) {
+export function getTexts(resultOf) {
   if (resultOf(builtInActions.runDataSuppliers) !== 'full') {
     return resultOf(getTexts)
   }
-  
+
   return {
     Click: 'Click'
   }
@@ -201,10 +182,10 @@ export function getTexts (resultOf) {
 
 Actions triggered by a user.
 
-`./actions/userActions/index.js`
+`./actions/userActions/userActions.js`
 
 ```javascript
-export function incrementCounter (counter) {
+export function incrementCounter(counter) {
   const incrementedCounter = Number(counter) + 1
 
   global.sessionStorage.setItem('appWideCounter', incrementedCounter)
@@ -215,22 +196,18 @@ export function incrementCounter (counter) {
 
 A way to tell the app to re-run Data Suppliers based on executed User Actions.
 
-
 - A Reload Type groups User Actions together to tell the app to reload all Data Suppliers as a consequence of their execution.
-- When any of its User Actions is triggered, the app sets the Reload Type name under built-in `runDataSuppliers` and reloads all Data Suppliers. 
+- When any of its User Actions is triggered, the app sets the Reload Type name under built-in `runDataSuppliers` and reloads all Data Suppliers.
 - Data Suppliers can benefit from caching by early returning their results based on Reload Type name.
 - Each Reload Type is a function which passes `nameOf` and returns an array of User Action names.
-    - `nameOf` - a function providing a name of User Action.
+  - `nameOf` - a function providing a name of User Action.
 
 `./actions/reloadTypes.js`
 
 ```javascript
-import { incrementCounter } from './userActions/index'
+import { incrementCounter } from './userActions/userActions'
 
-export const reFetchCounter = (nameOf) => [
-  nameOf(incrementCounter)
-]
-
+export const reFetchCounter = (nameOf) => [nameOf(incrementCounter)]
 ```
 
 #### 5. Layout
@@ -240,53 +217,50 @@ Nothing else than the page layout.
 `./Layout.jsx`
 
 ```jsx
-import Counter from './partials/Counter/index.jsx'
+import Counter from './partials/Counter/Counter.jsx'
 
 export default () => (
-  <div className='container'>
+  <>
     <Counter />
-  </div>
+  </>
 )
-
 ```
 
 #### 6. Partials
 
 Partials are self-contained pieces of UI which have access to app state via the app context.
 
-- `useAppContext` - a function which returns an array of 3 items: `resultOf`, `action`, `nameOf`. 
-    - `resultOf` - a function providing a result of a given Data Supplier or User Action.
-    - `action` - a function which triggers User Action.
-    - `nameOf` - a function providing a name of either Data Supplier or User Action.
+- `useAppContext` - a function which returns an array of 3 items: `resultOf`, `action`, `nameOf`.
+  - `resultOf` - a function providing a result of a given Data Supplier or User Action.
+  - `action` - a function which triggers User Action.
+  - `nameOf` - a function providing a name of either Data Supplier or User Action.
 
-`./partials/Counter/index.jsx`
+`./partials/Counter/Counter.jsx`
 
 ```jsx
 import { useAppContext } from '@gluecodes/storecle-solid'
 
-import { getCounter, getTexts } from '../../actions/dataSuppliers/index'
-import { incrementCounter } from '../../actions/userActions/index'
-
-
+import { getCounter, getTexts } from '../../actions/dataSuppliers/dataSuppliers'
+import { incrementCounter } from '../../actions/userActions/userActions'
 
 export default () => {
   const [resultOf, action] = useAppContext()
-  
+
   return (
     <button
       onClick={() => {
-        action(incrementCounter)(
-          resultOf(getCounter)
-        )
+        action(incrementCounter)(resultOf(getCounter))
       }}
-    >{resultOf(getTexts)?.Click}: {resultOf(getCounter)}</button>
+    >
+      {resultOf(getTexts)?.Click}: {resultOf(getCounter)}
+    </button>
   )
 }
 ```
 
 ## Documentation
 
-WIP, so far there is only this `README.md` and a project `./test/env`. More docs will come with starter templates and CLI tooling. 
+WIP, so far there is only this `README.md` and a project `./test/env`. More docs will come with starter templates and CLI tooling.
 
 ## License
 

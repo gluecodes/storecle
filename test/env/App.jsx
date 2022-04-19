@@ -1,10 +1,10 @@
 import { PageProvider } from '@gluecodes/storecle'
 
-import * as dataSuppliers from './actions/dataSuppliers/index'
-import * as userActions from './actions/userActions/index'
+import * as dataSuppliers from './actions/dataSuppliers/dataSuppliers'
+import * as userActions from './actions/userActions/userActions'
 import * as reloadTypes from './actions/reloadTypes'
 
-import Layout from './Layout.jsx'
+import Layout from './Layout'
 
 export default () => {
   return (

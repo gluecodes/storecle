@@ -1,7 +1,7 @@
-import ExamplePartial from './ExamplePartial.jsx'
+import ExamplePartial from './ExamplePartial'
 
 export default () => (
-  <div className='container'>
+  <>
     <ExamplePartial />
-  </div>
+  </>
 )
