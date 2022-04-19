@@ -28,7 +28,8 @@ export default ({
   onError
 }) => {
   const [store, updateStore] = useReducer(reducer, {
-    ...initialState
+    ...initialState,
+    userActionBeingExecuted: []
   })
 
   const storeRef = useRef({ store })
