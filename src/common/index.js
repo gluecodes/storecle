@@ -5,7 +5,7 @@ export const adaptForReact = (updateStore, storeRef) => ({
         type: 'bulkUpdate',
         result: keyName(storeRef.store)
       })
-    } else if (['runDataSuppliers', 'userActionBeingExecuted'].includes(keyName)) {
+    } else if (keyName === 'runDataSuppliers') {
       storeRef.store[keyName] = result
     } else {
       storeRef.store[keyName] = result // React's Automatic Batching doesn't update store immediately, therefore modify ref which is passed among data suppliers
@@ -25,6 +25,7 @@ export const adaptForSolid = (updateStore) => ({
 })
 
 export const builtInActions = {
+  getUserActionsBeingExecuted: [],
   onStoreChanged: null,
   runUserActions: null,
   runDataSuppliers: null
@@ -37,7 +38,8 @@ export default ({
   reloadTypes,
   storeRef,
   updateStore,
-  userActions
+  userActions,
+  userActionsBeingExecuted
 }) => {
   const storeChangedEventTarget = new EventTarget()
   const storeChangedEventListeners = []
@@ -57,16 +59,13 @@ export default ({
 
             const actionBeingExecuted = userActions[actionName](...args)
 
-            setInStore('userActionBeingExecuted', [...storeRef.store.userActionBeingExecuted, actionName]) // pure push
+            userActionsBeingExecuted.push(actionName)
             userActionCounts[actionName] = ++userActionCounts[actionName] || 1
 
             if (actionBeingExecuted instanceof Promise) {
               return actionBeingExecuted
                 .then((result) => {
                   setInStore(actionName, userActionCounts[actionName])
-                  setTimeout(() => {
-                    setInStore('userActionBeingExecuted', storeRef.store.userActionBeingExecuted.slice(1)) // pure shift
-                  }, 0)
 
                   return result
                 })
@@ -74,9 +73,7 @@ export default ({
             }
 
             setInStore(actionName, userActionCounts[actionName])
-            setTimeout(() => {
-              setInStore('userActionBeingExecuted', storeRef.store.userActionBeingExecuted.slice(1)) // pure shift
-            }, 0)
+
             return actionBeingExecuted
           } catch (err) {
             handleError(err)
@@ -119,6 +116,10 @@ export default ({
       Object.keys(userActions).find((actionName) => userActions[actionName] === action) ||
       Object.keys(builtInActions).find((actionName) => builtInActions[actionName] === action)
 
+    if (actionName === 'getUserActionsBeingExecuted') {
+      return userActionsBeingExecuted
+    }
+
     return storeRef.store[actionName]
   }
 
@@ -140,7 +141,6 @@ export default ({
         }
 
         const actionName = Object.keys(dataSuppliers).find((actionName) => dataSuppliers[actionName] === action)
-
         const actionBeingExecuted = dataSuppliers[actionName](getActionResult, getNameOfAction)
 
         if (actionBeingExecuted instanceof Promise) {
