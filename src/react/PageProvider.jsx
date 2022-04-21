@@ -28,10 +28,10 @@ export default ({
   onError
 }) => {
   const [store, updateStore] = useReducer(reducer, {
-    ...initialState,
-    userActionBeingExecuted: []
+    ...initialState
   })
 
+  const userActionsBeingExecutedRef = useRef([])
   const storeRef = useRef({ store })
 
   const { context, nameOf, runDataSuppliers } = useMemo(
@@ -43,6 +43,7 @@ export default ({
         reloadTypes,
         storeRef: storeRef.current,
         userActions,
+        userActionsBeingExecuted: userActionsBeingExecutedRef.current,
         ...adaptForReact(updateStore, storeRef.current)
       }),
     []
@@ -56,24 +57,22 @@ export default ({
         const reloadType = Object.keys(reloadTypes).find((type) =>
           reloadTypes[type](nameOf).some(
             (actionName) =>
-              storeRef.current.store.userActionBeingExecuted?.[0] ===
+              userActionsBeingExecutedRef.current?.[0] ===
                 actionName && storeRef.current.store[actionName]
           )
         )
 
-        runDataSuppliers(reloadType)
+        if (reloadType || !storeRef.current.store.runDataSuppliers) {
+          runDataSuppliers(reloadType)
+        }
       }
 
       run()
+        .then(() => {
+          userActionsBeingExecutedRef.current.shift()
+        })
     },
-    Array.from(
-      new Set(
-        Object.keys(reloadTypes).reduce(
-          (acc, type) => acc.concat(reloadTypes[type](nameOf)),
-          []
-        )
-      )
-    ).map((actionName) => store[actionName])
+    Object.keys(userActions).map((actionName) => store[actionName])
   )
 
   if (storeRef.current.store !== store) {

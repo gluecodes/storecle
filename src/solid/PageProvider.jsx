@@ -14,9 +14,10 @@ export default ({
   onError
 }) => {
   const [store, updateStore] = createStore({
-    ...initialState,
-    userActionBeingExecuted: []
+    ...initialState
   })
+
+  const userActionsBeingExecuted = []
 
   const { context, nameOf, runDataSuppliers } = initPage({
     handleError: onError,
@@ -25,18 +26,23 @@ export default ({
     dataSupplierPipeline,
     dataSuppliers,
     userActions,
+    userActionsBeingExecuted,
     ...adaptForSolid(updateStore)
   })
 
   runDataSuppliers()
 
   createEffect(() => {
+    Object.keys(userActions).forEach((actionName) => store[actionName])
+
     const reloadType = Object.keys(reloadTypes).find((type) =>
       reloadTypes[type](nameOf).some(
         (actionName) =>
-          store.userActionBeingExecuted?.[0] === actionName && store[actionName]
+          userActionsBeingExecuted?.[0] === actionName && store[actionName]
       )
     )
+
+    userActionsBeingExecuted.shift()
 
     if (reloadType) {
       runDataSuppliers(reloadType)
