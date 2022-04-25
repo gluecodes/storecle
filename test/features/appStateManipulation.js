@@ -34,16 +34,21 @@ describe('app state manipulation', () => {
       snapshotType: appChangeHistorySnapshotTypes.firstDataSupplierCachedResults
     })
 
-    expect(await env.document.querySelector(`.${elementClassNames.firstDataSupplierResult}`).innerText.promise())
-      .to.equal('result of getThis')
-    expect(await env.document.querySelector(`.${elementClassNames.secondDataSupplierResult}`).innerText.promise())
-      .to.equal('result of getThat which accessed result of getThis')
-    expect(await env.document.querySelector(`.${elementClassNames.incomingDataSupplierResult}`).innerText.promise())
-      .to.equal('incoming data: 10')
-    expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
-      .to.equal('')
-    expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
-      .to.equal('')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.firstDataSupplierResult}`).innerText.promise()
+    ).to.equal('result of getThis')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.secondDataSupplierResult}`).innerText.promise()
+    ).to.equal('result of getThat which accessed result of getThis')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.incomingDataSupplierResult}`).innerText.promise()
+    ).to.equal('incoming data: 10')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise()
+    ).to.equal('')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise()
+    ).to.equal('')
 
     expect(incomingDataSupplierInitializationsCount).to.equal(1)
     expect(firstDataSupplierTriggersCount).to.equal(1)
@@ -60,15 +65,17 @@ describe('app state manipulation', () => {
       snapshotType: appChangeHistorySnapshotTypes.lastDomMutation
     })
 
-    expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
-      .to.equal('1')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise()
+    ).to.equal('1')
 
     expect(lastDomMutation.type).to.equal('childList')
     expect(lastDomMutation.affectedElementClassName).to.equal(elementClassNames.firstUserActionResult)
     expect(lastDomMutation.innerText).to.equal('1')
 
-    expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
-      .to.equal('')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise()
+    ).to.equal('')
   })
 
   it('should trigger user action which reloads data suppliers', async () => {
@@ -90,8 +97,9 @@ describe('app state manipulation', () => {
       snapshotType: appChangeHistorySnapshotTypes.firstDataSupplierCachedResults
     })
 
-    expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
-      .to.equal('1')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise()
+    ).to.equal('1')
 
     expect(lastDomMutation.type).to.equal('childList')
     expect(lastDomMutation.affectedElementClassName).to.equal(elementClassNames.secondUserActionResult)
@@ -101,8 +109,9 @@ describe('app state manipulation', () => {
     expect(secondDataSupplierTriggersCount).to.equal(2)
     expect(firstDataSupplierCachedResultsCount).to.equal(1)
 
-    expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
-      .to.equal('')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise()
+    ).to.equal('')
   })
 
   it('should trigger incoming data event', async () => {
@@ -117,18 +126,21 @@ describe('app state manipulation', () => {
         snapshotType: appChangeHistorySnapshotTypes.incomingDataSupplierInitializations
       })
 
-      expect(await env.document.querySelector(`.${elementClassNames.incomingDataSupplierResult}`).innerText.promise())
-        .to.equal(`incoming data: ${number}`)
+      expect(
+        await env.document.querySelector(`.${elementClassNames.incomingDataSupplierResult}`).innerText.promise()
+      ).to.equal(`incoming data: ${number}`)
 
       expect(lastDomMutation.type).to.equal('characterData')
       expect(lastDomMutation.parentElementClassName).to.equal(elementClassNames.incomingDataSupplierResult)
       expect(lastDomMutation.affectedText).to.equal(number)
 
-      expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
-        .to.equal('')
+      expect(
+        await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise()
+      ).to.equal('')
 
-      expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
-        .to.equal('')
+      expect(
+        await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise()
+      ).to.equal('')
 
       expect(incomingDataSupplierInitializationsCount).to.equal(1)
     }
@@ -143,8 +155,9 @@ describe('app state manipulation', () => {
       snapshotType: appChangeHistorySnapshotTypes.lastDomMutation
     })
 
-    expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
-      .to.equal('3')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise()
+    ).to.equal('3')
 
     expect(lastDomMutation.type).to.equal('characterData')
     expect(lastDomMutation.parentElementClassName).to.equal(elementClassNames.firstUserActionResult)
@@ -154,10 +167,31 @@ describe('app state manipulation', () => {
   it('should run user actions in bulk', async () => {
     await env.page.click(`.${elementClassNames.bulkUserActionTrigger}`)
 
-    expect(await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise())
-      .to.equal('1')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.firstUserActionResult}`).innerText.promise()
+    ).to.equal('1')
 
-    expect(await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise())
-      .to.equal('1')
+    expect(
+      await env.document.querySelector(`.${elementClassNames.secondUserActionResult}`).innerText.promise()
+    ).to.equal('1')
+  })
+
+  it('bla bla', async () => {
+    const expectedText =
+      'result of squash1 | result of squash1, result of squash2 | result of squash1, result of squash1, result of squash2, result of squash3'
+
+    await env.page.click(`.${elementClassNames.triggerSquashedDataSuppliers}`)
+
+    const lastDomMutation = await env.fetchAppChangeHistory({
+      snapshotType: appChangeHistorySnapshotTypes.lastDomMutation
+    })
+
+    if (lastDomMutation.type === 'childList') {
+      expect(lastDomMutation.innerText).to.equal(expectedText)
+    } else if (lastDomMutation.type === 'characterData') {
+      expect(
+        await env.document.querySelector(`.${lastDomMutation.parentElementClassName}`).innerText.promise()
+      ).to.equal(expectedText)
+    }
   })
 })

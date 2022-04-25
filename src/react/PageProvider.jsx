@@ -57,8 +57,7 @@ export default ({
         const reloadType = Object.keys(reloadTypes).find((type) =>
           reloadTypes[type](nameOf).some(
             (actionName) =>
-              userActionsBeingExecutedRef.current?.[0] ===
-                actionName && storeRef.current.store[actionName]
+              userActionsBeingExecutedRef.current?.[0] === actionName && storeRef.current.store[actionName]
           )
         )
 
@@ -67,10 +66,9 @@ export default ({
         }
       }
 
-      run()
-        .then(() => {
-          userActionsBeingExecutedRef.current.shift()
-        })
+      run().then(() => {
+        userActionsBeingExecutedRef.current.shift()
+      })
     },
     Object.keys(userActions).map((actionName) => store[actionName])
   )
@@ -79,9 +77,5 @@ export default ({
     storeRef.current.store = store
   }
 
-  return (
-    <AppProvider value={context}>
-      {React.createElement(getLayout())}
-    </AppProvider>
-  )
+  return <AppProvider value={context}>{React.createElement(getLayout())}</AppProvider>
 }
