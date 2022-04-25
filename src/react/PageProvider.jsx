@@ -31,7 +31,7 @@ export default ({
     ...initialState
   })
 
-  const [rerenderCount, triggerRedender] = useState(0)
+  const [manualRerenderCount, triggerManualRerender] = useState(0)
   const userActionsBeingExecutedRef = useRef([])
   const storeRef = useRef({ store })
 
@@ -50,15 +50,14 @@ export default ({
     []
   )
 
-  const MemomizedLayout = useMemo(() => {
-    return React.memo(getLayout(), () => {
-      return userActionsBeingExecutedRef.current.length > 0
-    })
-  }, [])
+  const MemomizedLayout = useMemo(
+    () => React.memo(getLayout(), () => userActionsBeingExecutedRef.current.length > 0),
+    []
+  )
 
   useEffect(
     () => {
-      let isNonReloadingAction = false
+      let isNonReloadingActionTrigger = false
 
       const run = async () => {
         await Promise.resolve() // ensures storeRef gets updated correctly when 1st supplier is sync
@@ -73,15 +72,15 @@ export default ({
         if (reloadType || !storeRef.current.store.runDataSuppliers) {
           runDataSuppliers(reloadType)
         } else {
-          isNonReloadingAction = true
+          isNonReloadingActionTrigger = true
         }
       }
 
       run().then(() => {
         userActionsBeingExecutedRef.current.shift()
 
-        if (isNonReloadingAction) {
-          triggerRedender(rerenderCount + 1)
+        if (isNonReloadingActionTrigger) {
+          triggerManualRerender(manualRerenderCount + 1)
         }
       })
     },
