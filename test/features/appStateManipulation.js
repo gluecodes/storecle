@@ -176,11 +176,19 @@ describe('app state manipulation', () => {
     ).to.equal('1')
   })
 
-  it('bla bla', async () => {
+  it('should update DOM just once for squashed data supplier runs', async () => {
     const expectedText =
       'result of squash1 | result of squash1, result of squash2 | result of squash1, result of squash1, result of squash2, result of squash3'
 
+    expect(
+      await env.document.querySelector(`.${elementClassNames.squashedSupplierCallActionResult}`).innerText.promise()
+    ).to.equal('| |')
+
     await env.page.click(`.${elementClassNames.triggerSquashedDataSuppliers}`)
+
+    expect(
+      await env.document.querySelector(`.${elementClassNames.squashedSupplierCallActionResult}`).innerText.promise()
+    ).to.equal(expectedText)
 
     const lastDomMutation = await env.fetchAppChangeHistory({
       snapshotType: appChangeHistorySnapshotTypes.lastDomMutation
