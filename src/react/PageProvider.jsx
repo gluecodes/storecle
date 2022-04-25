@@ -62,7 +62,7 @@ export default ({
         )
 
         if (reloadType || !storeRef.current.store.runDataSuppliers) {
-          runDataSuppliers(reloadType)
+          await runDataSuppliers(reloadType)
         }
       }
 
