@@ -7,5 +7,7 @@
   "incomingDataSupplierResult": "incomingDataSupplierResult",
   "secondDataSupplierResult": "secondDataSupplierResult",
   "secondUserActionResult": "secondUserActionResult",
-  "secondUserActionTrigger": "secondUserActionTrigger"
+  "secondUserActionTrigger": "secondUserActionTrigger",
+  "squashedSupplierCallActionResult": "squashedSupplierCallActionResult",
+  "triggerSquashedDataSuppliers": "triggerSquashedDataSuppliers"
 }

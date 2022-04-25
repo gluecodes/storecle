@@ -36,10 +36,7 @@ export default ({
     Object.keys(userActions).forEach((actionName) => store[actionName])
 
     const reloadType = Object.keys(reloadTypes).find((type) =>
-      reloadTypes[type](nameOf).some(
-        (actionName) =>
-          userActionsBeingExecuted?.[0] === actionName && store[actionName]
-      )
+      reloadTypes[type](nameOf).some((actionName) => userActionsBeingExecuted?.[0] === actionName && store[actionName])
     )
 
     userActionsBeingExecuted.shift()

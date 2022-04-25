@@ -10,6 +10,9 @@ export default () => {
   return (
     <PageProvider
       dataSupplierPipeline={[
+        dataSuppliers.squash1,
+        dataSuppliers.squash2,
+        dataSuppliers.squash3,
         dataSuppliers.getThis,
         dataSuppliers.getThat,
         dataSuppliers.feedWithIncomingData

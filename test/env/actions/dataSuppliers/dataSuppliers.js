@@ -1,3 +1,6 @@
 export { default as getThis } from './getThis/getThis'
 export { default as getThat } from './getThat/getThat'
 export { default as feedWithIncomingData } from './feedWithIncomingData/feedWithIncomingData'
+export { default as squash1 } from './squash1/squash1'
+export { default as squash2 } from './squash2/squash2'
+export { default as squash3 } from './squash3/squash3'

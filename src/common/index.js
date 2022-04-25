@@ -44,6 +44,7 @@ export default ({
   const storeChangedEventTarget = new EventTarget()
   const storeChangedEventListeners = []
   const userActionCounts = {}
+  const syncSupplierUpdates = []
   let shouldAbortDataSuppliers = false
 
   const userActionsProxy = new Proxy(
@@ -120,6 +121,12 @@ export default ({
       return userActionsBeingExecuted
     }
 
+    const syncUpdate = syncSupplierUpdates.find(({ keyName }) => keyName === actionName)
+
+    if (syncUpdate) {
+      return syncUpdate.result
+    }
+
     return storeRef.store[actionName]
   }
 
@@ -129,6 +136,17 @@ export default ({
       Object.keys(builtInActions).find((actionName) => builtInActions[actionName] === action)
 
     return userActionsProxy[actionName]
+  }
+
+  const squashSyncSupplierCalls = () => {
+    if (syncSupplierUpdates.length > 0) {
+      setInStore((store) => ({
+        ...store,
+        ...syncSupplierUpdates.reduce((acc, { keyName, result }) => Object.assign(acc, { [keyName]: result }), {})
+      }))
+
+      syncSupplierUpdates.length = 0
+    }
   }
 
   const runDataSuppliers = async (reloadType = 'full') => {
@@ -144,8 +162,10 @@ export default ({
         const actionBeingExecuted = dataSuppliers[actionName](getActionResult, getNameOfAction)
 
         if (actionBeingExecuted instanceof Promise) {
+          squashSyncSupplierCalls()
           setInStore(actionName, await actionBeingExecuted)
         } else if (typeof actionBeingExecuted === 'function') {
+          squashSyncSupplierCalls()
           liveDataSuppliers.promises[actionName] = new Promise((resolve, reject) => {
             setTimeout(
               () =>
@@ -165,9 +185,11 @@ export default ({
           })
           liveDataSuppliers.initialized.push(actionName)
         } else {
-          setInStore(actionName, actionBeingExecuted)
+          syncSupplierUpdates.push({ keyName: actionName, result: actionBeingExecuted })
         }
       }
+
+      squashSyncSupplierCalls()
 
       storeChangedEventTarget.dispatchEvent(
         new CustomEvent('storeChanged', {
