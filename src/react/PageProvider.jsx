@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useReducer, useRef } from 'react'
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 
 import initPage, { adaptForReact } from '../common/index'
 import { AppProvider } from './appContext'
@@ -31,6 +31,7 @@ export default ({
     ...initialState
   })
 
+  const [manualRerenderCount, triggerManualRerender] = useState(0)
   const userActionsBeingExecutedRef = useRef([])
   const storeRef = useRef({ store })
 
@@ -49,8 +50,15 @@ export default ({
     []
   )
 
+  const MemomizedLayout = useMemo(
+    () => React.memo(getLayout(), () => userActionsBeingExecutedRef.current.length > 0),
+    []
+  )
+
   useEffect(
     () => {
+      let isNonReloadingActionTrigger = false
+
       const run = async () => {
         await Promise.resolve() // ensures storeRef gets updated correctly when 1st supplier is sync
 
@@ -63,11 +71,17 @@ export default ({
 
         if (reloadType || !storeRef.current.store.runDataSuppliers) {
           runDataSuppliers(reloadType)
+        } else {
+          isNonReloadingActionTrigger = true
         }
       }
 
       run().then(() => {
         userActionsBeingExecutedRef.current.shift()
+
+        if (isNonReloadingActionTrigger) {
+          triggerManualRerender(manualRerenderCount + 1)
+        }
       })
     },
     Object.keys(userActions).map((actionName) => store[actionName])
@@ -77,5 +91,9 @@ export default ({
     storeRef.current.store = store
   }
 
-  return <AppProvider value={context}>{React.createElement(getLayout())}</AppProvider>
+  return (
+    <AppProvider value={context}>
+      <MemomizedLayout />
+    </AppProvider>
+  )
 }
