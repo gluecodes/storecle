@@ -31,7 +31,7 @@ export default ({
     ...initialState
   })
 
-  const [manualRerenderCount, triggerManualRerender] = useState(0)
+  const [manualRerenderFlag, triggerManualRerender] = useState(0)
   const userActionsBeingExecutedRef = useRef([])
   const storeRef = useRef({ store })
 
@@ -80,7 +80,7 @@ export default ({
         userActionsBeingExecutedRef.current.shift()
 
         if (isNonReloadingActionTrigger) {
-          triggerManualRerender(manualRerenderCount + 1)
+          triggerManualRerender(+!manualRerenderFlag)
         }
       })
     },
