@@ -39,10 +39,8 @@ export default ({
       reloadTypes[type](nameOf).some((actionName) => userActionsBeingExecuted?.[0] === actionName && store[actionName])
     )
 
-    userActionsBeingExecuted.shift()
-
     if (reloadType) {
-      runDataSuppliers(reloadType)
+      runDataSuppliers(reloadType).then(() => userActionsBeingExecuted.shift())
     }
   })
 

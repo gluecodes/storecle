@@ -35,7 +35,7 @@ export default ({
   const userActionsBeingExecutedRef = useRef([])
   const storeRef = useRef({ store })
 
-  const { context, nameOf, runDataSuppliers } = useMemo(
+  const { context, nameOf, runDataSuppliers, squashRemainingSyncSupplierCalls } = useMemo(
     () =>
       initPage({
         dataSupplierPipeline,
@@ -70,14 +70,15 @@ export default ({
         )
 
         if (reloadType || !storeRef.current.store.runDataSuppliers) {
-          runDataSuppliers(reloadType)
-        } else {
-          isNonReloadingActionTrigger = true
+          return runDataSuppliers(reloadType)
         }
+
+        isNonReloadingActionTrigger = true
       }
 
       run().then(() => {
         userActionsBeingExecutedRef.current.shift()
+        squashRemainingSyncSupplierCalls()
 
         if (isNonReloadingActionTrigger) {
           triggerManualRerender(+!manualRerenderFlag)
