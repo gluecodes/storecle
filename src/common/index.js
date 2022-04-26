@@ -1,4 +1,10 @@
+const FRAMEWORK = {
+  react: 'react',
+  solid: 'solid'
+}
+
 export const adaptForReact = (updateStore, storeRef) => ({
+  framework: FRAMEWORK.react,
   updateStore: (keyName, result) => {
     if (typeof keyName === 'function') {
       updateStore({
@@ -15,6 +21,7 @@ export const adaptForReact = (updateStore, storeRef) => ({
 })
 
 export const adaptForSolid = (updateStore) => ({
+  framework: FRAMEWORK.solid,
   updateStore: (keyName, result) => {
     if (typeof keyName === 'function') {
       updateStore(keyName)
@@ -39,7 +46,8 @@ export default ({
   storeRef,
   updateStore,
   userActions,
-  userActionsBeingExecuted
+  userActionsBeingExecuted,
+  framework
 }) => {
   const storeChangedEventTarget = new EventTarget()
   const storeChangedEventListeners = []
@@ -121,7 +129,8 @@ export default ({
       return userActionsBeingExecuted
     }
 
-    const syncUpdate = syncSupplierUpdates.find(({ keyName }) => keyName === actionName)
+    const syncUpdate =
+      framework === FRAMEWORK.react && syncSupplierUpdates.find(({ keyName }) => keyName === actionName)
 
     if (syncUpdate) {
       return syncUpdate.result
@@ -162,10 +171,8 @@ export default ({
         const actionBeingExecuted = dataSuppliers[actionName](getActionResult, getNameOfAction)
 
         if (actionBeingExecuted instanceof Promise) {
-          squashSyncSupplierCalls()
           setInStore(actionName, await actionBeingExecuted)
         } else if (typeof actionBeingExecuted === 'function') {
-          squashSyncSupplierCalls()
           liveDataSuppliers.promises[actionName] = new Promise((resolve, reject) => {
             setTimeout(
               () =>
@@ -185,11 +192,13 @@ export default ({
           })
           liveDataSuppliers.initialized.push(actionName)
         } else {
-          syncSupplierUpdates.push({ keyName: actionName, result: actionBeingExecuted })
+          if (framework === FRAMEWORK.react) {
+            syncSupplierUpdates.push({ keyName: actionName, result: actionBeingExecuted })
+          } else {
+            setInStore(actionName, actionBeingExecuted)
+          }
         }
       }
-
-      squashSyncSupplierCalls()
 
       storeChangedEventTarget.dispatchEvent(
         new CustomEvent('storeChanged', {
@@ -258,6 +267,7 @@ export default ({
   return {
     context: [getActionResult, dispatchAction, getNameOfAction, cleanup],
     nameOf: getNameOfAction,
-    runDataSuppliers
+    runDataSuppliers,
+    squashRemainingSyncSupplierCalls: squashSyncSupplierCalls
   }
 }
